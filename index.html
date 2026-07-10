@@ -8,7 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         body { background: #0a0a0a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; overflow: hidden; position: relative; }
         
-        /* ===== SNOW EFFECT ===== */
+        /* ===== SNOW ===== */
         .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
         .snowflake { position: absolute; top: -10px; color: #ffffff; font-size: 14px; opacity: 0.8; animation: fall linear infinite; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
         @keyframes fall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0.2; } }
@@ -24,7 +24,6 @@
         .logo p { color: #ff6b9d; font-size: 13px; margin-top: 4px; text-shadow: 0 0 10px rgba(255,107,157,0.3); }
         .logo .badge { display: inline-block; background: rgba(255,45,117,0.15); color: #ff2d75; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid rgba(255,45,117,0.3); margin-top: 6px; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
         
-        /* ===== LOGIN ===== */
         .login-box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,45,117,0.2); margin: 10px 0; backdrop-filter: blur(10px); }
         .login-box label { color: #ff6b9d; font-size: 12px; display: block; margin-bottom: 4px; font-weight: 600; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
         .login-box input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,45,117,0.3); background: rgba(0,0,0,0.4); color: #ff6b9d; font-size: 14px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; letter-spacing: 1px; }
@@ -40,15 +39,17 @@
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .btn-success { background: linear-gradient(135deg, #34c759, #28a745); box-shadow: 0 0 30px rgba(52,199,89,0.2); }
         .btn-success:hover { box-shadow: 0 0 50px rgba(52,199,89,0.4); }
-        .btn-danger { background: linear-gradient(135deg, #ff4466, #cc1133); }
-        .btn-gray { background: linear-gradient(135deg, #666688, #444466); }
         
-        /* ===== KEY LIST ===== */
+        .free-key-section { background: rgba(255,45,117,0.05); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.2); margin-top: 10px; }
+        .free-key-section .title { color: #ff2d75; font-size: 13px; font-weight: 600; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
+        .free-key-section .free-key { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; word-break: break-all; padding: 6px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 4px; border: 1px dashed rgba(255,45,117,0.2); cursor: pointer; transition: 0.3s; }
+        .free-key-section .free-key:hover { border-color: #ff2d75; background: rgba(255,45,117,0.05); }
+        
         .key-list-container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 10px; max-height: 150px; overflow-y: auto; }
         .key-list-container::-webkit-scrollbar { width: 3px; }
         .key-list-container::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
         .key-list-container .title { color: #ff6b9d; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
-        .key-list-container .key-item { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
+        .key-list-container .key-item { color: #ff6b9d; font-size: 12px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
         .key-list-container .key-item .status-icon { margin-right: 6px; }
         .key-list-container .key-item .used { color: #34c759; }
         .key-list-container .key-item .unused { color: #666688; }
@@ -81,11 +82,13 @@
         .uid-box .uid-value { color: #ff6b9d; font-size: 13px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(255,107,157,0.1); }
         .uid-box .status { color: #34c759; font-size: 13px; margin-top: 4px; }
         
-        .admin-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; display: none; max-height: 200px; overflow-y: auto; }
+        /* ===== ADMIN SECTION - 2 DANH SÁCH ===== */
+        .admin-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; display: none; max-height: 300px; overflow-y: auto; }
         .admin-section::-webkit-scrollbar { width: 3px; }
         .admin-section::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
         .admin-section .title { color: #ff2d75; font-weight: 600; font-size: 13px; margin-bottom: 6px; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
-        .admin-section .key-item { color: #ff6b9d; font-size: 12px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
+        .admin-section .sub-title { color: #ff6b9d; font-size: 12px; font-weight: 500; margin: 4px 0; text-shadow: 0 0 10px rgba(255,107,157,0.1); }
+        .admin-section .key-item { color: #ff6b9d; font-size: 11px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,45,117,0.9); color: #ffffff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; box-shadow: 0 0 40px rgba(255,45,117,0.3); display: none; max-width: 90%; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .toast.show { display: block; animation: fadeIn 0.3s ease; }
@@ -98,17 +101,11 @@
         .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #ff2d75; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .free-key-section { background: rgba(255,45,117,0.05); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.2); margin-top: 10px; }
-        .free-key-section .title { color: #ff2d75; font-size: 13px; font-weight: 600; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
-        .free-key-section .free-key { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; word-break: break-all; padding: 6px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 4px; border: 1px dashed rgba(255,45,117,0.2); cursor: pointer; transition: 0.3s; }
-        .free-key-section .free-key:hover { border-color: #ff2d75; background: rgba(255,45,117,0.05); }
-        
         @media (max-width: 400px) { .container { padding: 20px 16px; } .key-info .value { font-size: 12px; } }
     </style>
 </head>
 <body>
 
-<!-- ===== SNOW EFFECT ===== -->
 <div class="snow-container" id="snowContainer"></div>
 
 <div id="toast" class="toast">✅ Thành công!</div>
@@ -123,7 +120,6 @@
             <div class="badge">❄️ NEON EDITION ❄️</div>
         </div>
         
-        <!-- FREE KEY SECTION -->
         <div class="free-key-section" id="freeKeySection">
             <div class="title">🎁 KEY FREE - COPY & PASTE</div>
             <div class="free-key" id="freeKeyDisplay" onclick="copyFreeKey()">FREE-DPI-VIP-2026-NEON</div>
@@ -137,7 +133,6 @@
         </div>
         <button class="btn" id="loginBtn" onclick="login()">🔓 ĐĂNG NHẬP</button>
         
-        <!-- DANH SÁCH KEY -->
         <div class="key-list-container" id="keyListContainer">
             <div class="title">📋 DANH SÁCH KEY (200 KEY)</div>
             <div id="keyListContent"></div>
@@ -177,12 +172,18 @@
             ⬇️ TẢI CONFIG VIP NEON
         </button>
 
+        <!-- ===== ADMIN SECTION - 2 DANH SÁCH ===== -->
         <div class="admin-section" id="adminSection">
-            <div class="title">👑 DANH SÁCH KEY (ADMIN)</div>
-            <div id="adminKeyList"></div>
+            <div class="title">👑 QUẢN LÝ KEY (ADMIN)</div>
+            
+            <div class="sub-title">📋 DANH SÁCH 1: KEY 5 GIỜ & 1 NGÀY</div>
+            <div id="adminKeyList1"></div>
+            
+            <div class="sub-title" style="margin-top:8px;">🎁 DANH SÁCH 2: KEY FREE & ADMIN</div>
+            <div id="adminKeyList2"></div>
         </div>
 
-        <div class="footer-text">❄️ Config chỉ hoạt động khi key còn hạn · NEON EDITION</div>
+        <div class="footer-text">❄️ DNS: DPI VIP · NEON EDITION</div>
     </div>
 
 </div>
@@ -224,7 +225,8 @@ function generateKeyDatabase() {
         type: 'Admin',
         duration: -1,
         hash: generateKeyHash(adminKey),
-        isAdmin: true
+        isAdmin: true,
+        category: 'admin'
     };
     
     // Free Key
@@ -233,17 +235,19 @@ function generateKeyDatabase() {
         duration: 2,
         hash: generateKeyHash(FREE_KEY),
         isAdmin: false,
-        isFree: true
+        isFree: true,
+        category: 'free'
     };
     
-    // 100 key 5 giờ
-    for (let i = 0; i < 100; i++) {
+    // 50 key 5 giờ
+    for (let i = 0; i < 50; i++) {
         const k = generateRandomKey(10);
         keys[k] = {
             type: '5 giờ',
             duration: 5,
             hash: generateKeyHash(k),
-            isAdmin: false
+            isAdmin: false,
+            category: '5h'
         };
     }
     
@@ -254,11 +258,12 @@ function generateKeyDatabase() {
             type: '1 ngày',
             duration: 24,
             hash: generateKeyHash(k),
-            isAdmin: false
+            isAdmin: false,
+            category: '1d'
         };
     }
     
-    // 50 key Free (để đủ 200)
+    // 49 key Free (để đủ 200)
     for (let i = 0; i < 49; i++) {
         const k = 'FREE-' + generateRandomKey(8);
         keys[k] = {
@@ -266,7 +271,8 @@ function generateKeyDatabase() {
             duration: 2,
             hash: generateKeyHash(k),
             isAdmin: false,
-            isFree: true
+            isFree: true,
+            category: 'free'
         };
     }
     
@@ -283,11 +289,12 @@ Object.keys(KEY_DATABASE).forEach(k => {
         duration: KEY_DATABASE[k].duration,
         isAdmin: KEY_DATABASE[k].isAdmin || false,
         isFree: KEY_DATABASE[k].isFree || false,
+        category: KEY_DATABASE[k].category || 'normal',
         key: k
     };
 });
 
-// ===== SESSION MANAGEMENT =====
+// ===== SESSION =====
 function getSession(key) {
     try {
         const data = localStorage.getItem('dpi_neon_session_' + key);
@@ -321,10 +328,7 @@ function removeSession(key) {
     }
 }
 
-// ================================================================
-//                    HIỂN THỊ DANH SÁCH KEY
-// ================================================================
-
+// ===== HIỂN THỊ DANH SÁCH KEY =====
 function renderKeyList() {
     const container = document.getElementById('keyListContent');
     const sessions = {};
@@ -346,10 +350,7 @@ function renderKeyList() {
     container.innerHTML = html;
 }
 
-// ================================================================
-//                    COPY FREE KEY
-// ================================================================
-
+// ===== COPY FREE KEY =====
 function copyFreeKey() {
     const key = document.getElementById('freeKeyDisplay').textContent;
     if (navigator.clipboard) {
@@ -530,18 +531,38 @@ function enterApp(key, data) {
     document.getElementById('uidStatus').textContent = `✅ Đã nhận diện ${deviceName}`;
     document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Thành viên';
     
+    // ===== ADMIN: 2 DANH SÁCH =====
     if (isAdmin) {
         document.getElementById('adminSection').style.display = 'block';
-        const keyList = document.getElementById('adminKeyList');
-        let html = '';
+        
+        // Danh sách 1: Key 5 giờ & 1 ngày
+        const list1 = document.getElementById('adminKeyList1');
+        let html1 = '';
         Object.keys(KEY_DATABASE).forEach(k => {
-            const sessionData = getSession(k);
-            const isUsed = sessionData !== null;
-            const dataD = KEY_DATABASE[k];
-            const status = dataD.isAdmin ? '👑' : (isUsed ? '✅' : '⬜');
-            html += `<div class="key-item">${status} ${k}</div>`;
+            const data = KEY_DATABASE[k];
+            if (data.category === '5h' || data.category === '1d') {
+                const sessionData = getSession(k);
+                const isUsed = sessionData !== null;
+                const status = isUsed ? '✅' : '⬜';
+                html1 += `<div class="key-item">${status} ${k}</div>`;
+            }
         });
-        keyList.innerHTML = html;
+        list1.innerHTML = html1;
+        
+        // Danh sách 2: Key Free & Admin
+        const list2 = document.getElementById('adminKeyList2');
+        let html2 = '';
+        Object.keys(KEY_DATABASE).forEach(k => {
+            const data = KEY_DATABASE[k];
+            if (data.category === 'free' || data.category === 'admin') {
+                const sessionData = getSession(k);
+                const isUsed = sessionData !== null;
+                const isAdminKey = data.isAdmin || false;
+                const status = isAdminKey ? '👑' : (isUsed ? '✅' : '⬜');
+                html2 += `<div class="key-item">${status} ${k}</div>`;
+            }
+        });
+        list2.innerHTML = html2;
     }
 }
 
@@ -617,7 +638,7 @@ function getIOSVersion() {
 }
 
 // ================================================================
-//                    TẠO CONFIG
+//                    TẠO CONFIG VỚI DNS DPI VIP
 // ================================================================
 
 function generateConfig(uid, iosVersion, deviceName, key) {
@@ -660,13 +681,13 @@ function generateConfig(uid, iosVersion, deviceName, key) {
 
         🔒 THAY ĐỔI THIẾT BỊ: ĐÃ CỐ ĐỊNH THEO UID: ${uidShort}
 
-        🌐 DNS: DPI VIP_${uidShort}
+        🌐 DNS: DPI VIP
 
         🔑 KEY: ${key}
 
         ❄️ NEON EDITION`;
     
-    const descRight = `DPI VIP NEON - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. KEY: ${key}. NEON EDITION ❄️`;
+    const descRight = `DPI VIP NEON - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. DNS: DPI VIP. KEY: ${key}. NEON EDITION ❄️`;
     
     return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -710,10 +731,21 @@ function generateConfig(uid, iosVersion, deviceName, key) {
                 <key>AllowediOSVersions</key><array>${allowedXml}</array>
                 <key>DNSConfig</key>
                 <dict>
-                    <key>DNSServerName</key><string>DPI VIP_${uidShort}</string>
-                    <key>DNSIPv4</key><array><string>8.8.8.8</string><string>1.1.1.1</string><string>9.9.9.9</string></array>
-                    <key>DNSIPv6</key><array><string>2001:4860:4860::8888</string><string>2606:4700:4700::1111</string></array>
-                    <key>DeviceUID</key><string>${uid}</string>
+                    <key>DNSServerName</key>
+                    <string>DPI VIP</string>
+                    <key>DNSIPv4</key>
+                    <array>
+                        <string>8.8.8.8</string>
+                        <string>1.1.1.1</string>
+                        <string>9.9.9.9</string>
+                    </array>
+                    <key>DNSIPv6</key>
+                    <array>
+                        <string>2001:4860:4860::8888</string>
+                        <string>2606:4700:4700::1111</string>
+                    </array>
+                    <key>DeviceUID</key>
+                    <string>${uid}</string>
                 </dict>
                 <key>DPIParameters</key>
                 <dict>
@@ -865,13 +897,13 @@ function showToast(msg, type = '') {
 }
 
 // ================================================================
-//                    SNOW EFFECT - CHỐNG LAG
+//                    SNOW EFFECT
 // ================================================================
 
 function createSnow() {
     const container = document.getElementById('snowContainer');
     const flakes = ['❄', '❅', '❆', '✦', '•'];
-    const numFlakes = 35; // Giảm số lượng để chống lag
+    const numFlakes = 35;
     
     for (let i = 0; i < numFlakes; i++) {
         const flake = document.createElement('div');
@@ -894,7 +926,6 @@ document.addEventListener('DOMContentLoaded', function() {
     createSnow();
     renderKeyList();
     
-    // Tự động điền key free vào ô input khi click vào
     document.getElementById('freeKeyDisplay').addEventListener('click', function() {
         document.getElementById('keyInput').value = this.textContent;
         document.getElementById('loginStatus').textContent = '💡 Đã điền key free! Nhấn đăng nhập.';
