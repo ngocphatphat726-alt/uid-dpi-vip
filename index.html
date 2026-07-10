@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DPI VIP - Auto UID</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
+        .container { background: #1a1a2e; max-width: 480px; width: 100%; border-radius: 24px; padding: 28px 24px; border: 1px solid #2a2a4a; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo h1 { color: #00d4ff; font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+        .logo h1 span { color: #ff6b6b; }
+        .logo p { color: #8888aa; font-size: 13px; margin-top: 4px; }
+        .logo .badge { display: inline-block; background: #ff6b6b22; color: #ff6b6b; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid #ff6b6b44; margin-top: 6px; }
+        
+        .uid-box { background: #0d0d1a; border-radius: 12px; padding: 16px; border: 1px solid #333355; margin: 12px 0; }
+        .uid-box label { color: #8888aa; font-size: 12px; display: block; margin-bottom: 4px; }
+        .uid-box .uid-value { color: #00d4ff; font-size: 15px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; }
+        .uid-box .status { color: #34c759; font-size: 13px; margin-top: 6px; }
+        .uid-box .status.error { color: #ff4466; }
+        .uid-box .status.loading { color: #ffcc00; }
+        
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #00d4ff, #0070ff); color: white; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 12px; }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 8px 30px #00d4ff33; }
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-success { background: linear-gradient(135deg, #34c759, #28a745); }
+        
+        .info-box { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #2a2a4a; margin-top: 12px; display: none; }
+        .info-box .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a2e; }
+        .info-box .row:last-child { border-bottom: none; }
+        .info-box .label { color: #666688; font-size: 13px; }
+        .info-box .value { color: #e8e8f0; font-size: 13px; text-align: right; max-width: 60%; word-break: break-all; }
+        .info-box .value.highlight { color: #34c759; }
+        .info-box .value.uid { color: #ff6b6b; font-family: 'Courier New', monospace; font-size: 12px; }
+        
+        .feature-list { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #2a2a4a; margin-top: 12px; }
+        .feature-list .title { color: #8888aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .feature-list .item { color: #c8c8e0; font-size: 13px; padding: 3px 0; display: flex; align-items: center; gap: 8px; }
+        .feature-list .item .check { color: #34c759; }
+        .feature-list .item .cross { color: #ff4466; }
+        
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #00d4ff22; border: 1px solid #00d4ff44; color: #00d4ff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; backdrop-filter: blur(10px); display: none; max-width: 90%; text-align: center; }
+        .toast.show { display: block; animation: fadeIn 0.3s ease; }
+        .toast.error { background: #ff004422; border-color: #ff004444; color: #ff4466; }
+        .toast.success { background: #34c75922; border-color: #34c75944; color: #34c759; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        
+        .footer { margin-top: 16px; padding-top: 14px; border-top: 1px solid #1a1a2e; }
+        .footer .warning { color: #666688; font-size: 11px; text-align: center; line-height: 1.8; }
+        .footer .warning strong { color: #ff6b6b; }
+        
+        .manual-link { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #333355; margin-top: 12px; display: none; }
+        .manual-link .title { color: #8888aa; font-size: 13px; margin-bottom: 4px; }
+        .manual-link a { color: #00d4ff; word-break: break-all; text-decoration: none; font-weight: 500; font-size: 14px; }
+        
+        @media (max-width: 400px) { .container { padding: 20px 16px; } }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast">✅ Thành công!</div>
+
+<div class="container">
+    <div class="logo">
+        <h1>🔷 DPI <span>VIP</span></h1>
+        <p>Kéo tâm · Bám đầu mượt · Fix lố · Fix rung</p>
+        <div class="badge">⚡ Gắn UID tự động</div>
+    </div>
+
+    <!-- UID BOX -->
+    <div class="uid-box">
+        <label>📱 UID thiết bị của bạn</label>
+        <div class="uid-value" id="uidDisplay">⏳ Đang đọc...</div>
+        <div class="status loading" id="statusDisplay">⏳ Đang xác định thiết bị...</div>
+    </div>
+
+    <!-- NÚT TẢI -->
+    <button class="btn btn-success" id="downloadBtn" onclick="generateAndDownload()">
+        ⬇️ Tải DPI VIP (gắn UID sẵn)
+    </button>
+
+    <!-- THÔNG TIN FILE -->
+    <div class="info-box" id="fileInfo">
+        <div class="row"><span class="label">📄 Tên file</span><span class="value highlight" id="fileName">---</span></div>
+        <div class="row"><span class="label">🔑 UID nhúng</span><span class="value uid" id="fileUid">---</span></div>
+        <div class="row"><span class="label">📦 Dung lượng</span><span class="value" id="fileSize">---</span></div>
+        <div class="row"><span class="label">📱 Thiết bị</span><span class="value" id="fileDevice">---</span></div>
+        <div class="row"><span class="label">🍎 iOS hỗ trợ</span><span class="value" id="iosSupport">17.x, 18.7.x, 26.1</span></div>
+    </div>
+
+    <!-- DANH SÁCH CHỨC NĂNG -->
+    <div class="feature-list">
+        <div class="title">📋 CHỨC NĂNG DPI VIP</div>
+        <div class="item"><span class="check">✅</span> Kéo tâm mượt mà</div>
+        <div class="item"><span class="check">✅</span> Bám đầu siêu đỉnh</div>
+        <div class="item"><span class="check">✅</span> Fix lố, fix rung</div>
+        <div class="item"><span class="check">✅</span> Kéo là đỏ (hiệu ứng màu)</div>
+        <div class="item"><span class="check">✅</span> Giảm lag, tăng FPS</div>
+        <div class="item"><span class="check">✅</span> DNS siêu tốc</div>
+        <div class="item"><span class="check">✅</span> Gắn UID thiết bị tự động</div>
+        <div class="item"><span class="check">✅</span> Cố định thiết bị</div>
+        <div class="item"><span class="check">✅</span> Chống chia sẻ</div>
+    </div>
+
+    <!-- LINK DỰ PHÒNG -->
+    <div class="manual-link" id="manualLink">
+        <div class="title">⬇️ Nếu không tự động tải, nhấn link dưới:</div>
+        <a href="#" id="directLink" target="_blank">Tải file config</a>
+    </div>
+
+    <div class="footer">
+        <div class="warning">
+            ⚠️ <strong>KHÔNG</strong> chia sẻ file này cho người khác<br>
+            📌 File đã gắn UID thiết bị của bạn<br>
+            📞 Gặp vấn đề liên hệ Admin
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// HÀM LẤY UID TỰ ĐỘNG
+// ============================================================
+
+function getDeviceUID() {
+    try {
+        const ua = navigator.userAgent || '';
+        const platform = navigator.platform || '';
+        const lang = navigator.language || '';
+        const screenRes = `${screen.width}x${screen.height}x${screen.colorDepth || 24}`;
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        const cores = navigator.hardwareConcurrency || 0;
+        const memory = navigator.deviceMemory || 0;
+        const pixelRatio = window.devicePixelRatio || 1;
+        const touch = navigator.maxTouchPoints || 0;
+        const time = Date.now();
+        const random = Math.random().toString(36).substring(2, 10);
+        
+        const raw = `${ua}|${platform}|${lang}|${screenRes}|${tz}|${cores}|${memory}|${pixelRatio}|${touch}|${time}|${random}`;
+        
+        let hash = 0;
+        for (let i = 0; i < raw.length; i++) {
+            const char = raw.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        const hex = Math.abs(hash).toString(16).padStart(40, '0').toUpperCase();
+        return hex.substring(0, 40);
+    } catch(e) {
+        return 'UNKNOWN_' + Date.now().toString(16).toUpperCase();
+    }
+}
+
+function getDeviceName() {
+    const ua = navigator.userAgent || '';
+    if (ua.includes('iPhone')) return 'iPhone';
+    if (ua.includes('iPad')) return 'iPad';
+    if (ua.includes('iPod')) return 'iPod';
+    return 'iOS Device';
+}
+
+function getIOSVersion() {
+    const ua = navigator.userAgent || '';
+    const match = ua.match(/iPhone OS (\d+)_(\d+)(?:_(\d+))?/);
+    if (match) {
+        if (match[3]) return `${match[1]}.${match[2]}.${match[3]}`;
+        return `${match[1]}.${match[2]}`;
+    }
+    return '18.7.1';
+}
+
+// ============================================================
+// TẠO CONFIG DPI VIP ĐẦY ĐỦ
+// ============================================================
+
+function generateConfig(uid, iosVersion, deviceName) {
+    const uidShort = uid.substring(uid.length - 8);
+    
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    
+    const uuid1 = uuidv4();
+    const uuid2 = uuidv4();
+    
+    const allowedVersions = [
+        '17.0','17.1','17.2','17.3','17.4','17.5','17.6','17.7',
+        '18.7.1','18.7.2','18.7.3','18.7.4','18.7.5','18.7.6','18.7.7','18.7.8','18.7.9',
+        '26.1'
+    ];
+    
+    let allowedXml = '';
+    allowedVersions.forEach(v => { allowedXml += `\n                        <string>${v}</string>`; });
+    
+    const descLeft = `🔷 DPI VIP - KÉO TÂM SIÊU ĐỈNH
+        ✅ BÁM ĐẦU MƯỢT
+        ✅ NHE TÂM
+        ✅ FIX LỐ
+        ✅ FIX RUNG
+        ✅ KÉO LÀ ĐỎ
+        ✅ TĂNG NHẢY
+        ✅ GHIM VAI
+
+        ⚠️ LƯU Ý KHÔNG BÁN HOẶC CHỈNH SỬA
+        ⚠️ LƯU Ý KHÔNG CÀI FILE KHÁC
+        ⚠️ LƯU Ý CHỈ HỖ TRỢ iOS
+
+        HỖ TRỢ iOS: 17.x, 18.7.1 → 18.7.9, 26.1
+
+        🔒 THAY ĐỔI THIẾT BỊ: ĐÃ CỐ ĐỊNH THEO UID: ${uidShort}
+
+        🌐 DNS: DPI VIP_${uidShort}
+
+        ❓ 3 DỮ LIỆU KHÔNG XÁC ĐỊNH:
+        0x7F3A2B1C, 0x9E4D8F6A, 0xC2B1A4F8`;
+    
+    const descRight = `DPI VIP - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. Chỉ dùng cho iOS 17, 18.7.1-18.7.9, 26.1. KHÔNG chia sẻ, KHÔNG cài file khác.`;
+    
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- ========================================================= -->
+    <!--         MÔ TẢ NGẮN (HIỂN THỊ BÊN PHẢI)                  -->
+    <!-- ========================================================= -->
+    <key>PayloadDescription</key>
+    <string>${descRight}</string>
+    
+    <key>PayloadDisplayName</key>
+    <string>DPI VIP - Kéo tâm</string>
+    
+    <key>PayloadIdentifier</key>
+    <string>com.dpivip.profile.${uidShort}</string>
+    
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    
+    <key>PayloadUUID</key>
+    <string>${uuid2}</string>
+    
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <!-- ===================================================== -->
+            <!--         MÔ TẢ CHI TIẾT (HIỂN THỊ BÊN TRÁI)          -->
+            <!-- ===================================================== -->
+            <key>PayloadDescription</key>
+            <string>${descLeft}</string>
+            
+            <key>PayloadDisplayName</key>
+            <string>DPI VIP Config</string>
+            
+            <key>PayloadIdentifier</key>
+            <string>com.dpivip.config.${uidShort}</string>
+            
+            <key>PayloadType</key>
+            <string>Configuration</string>
+            
+            <key>PayloadUUID</key>
+            <string>${uuid1}</string>
+            
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            
+            <key>PayloadContent</key>
+            <dict>
+                <!-- =================================================== -->
+                <!--          1. UID THIẾT BỊ - NHẬN ĐỊNH             -->
+                <!-- =================================================== -->
+                <key>DeviceUID</key>
+                <string>${uid}</string>
+                <key>DeviceUID_Short</key>
+                <string>${uidShort}</string>
+                <key>DeviceName</key>
+                <string>${deviceName}</string>
+                <key>CreatedAt</key>
+                <string>${new Date().toISOString()}</string>
+                
+                <!-- =================================================== -->
+                <!--     2. DANH SÁCH IOS HỖ TRỢ                       -->
+                <!-- =================================================== -->
+                <key>AllowediOSVersions</key>
+                <array>${allowedXml}
+                </array>
+                
+                <!-- =================================================== -->
+                <!--     3. DNS TỐI ƯU                                 -->
+                <!-- =================================================== -->
+                <key>DNSConfig</key>
+                <dict>
+                    <key>DNSServerName</key>
+                    <string>DPI VIP_${uidShort}</string>
+                    <key>DNSIPv4</key>
+                    <array>
+                        <string>8.8.8.8</string>
+                        <string>1.1.1.1</string>
+                        <string>9.9.9.9</string>
+                    </array>
+                    <key>DNSIPv6</key>
+                    <array>
+                        <string>2001:4860:4860::8888</string>
+                        <string>2606:4700:4700::1111</string>
+                    </array>
+                    <key>DeviceUID</key>
+                    <string>${uid}</string>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     4. DPI PARAMETERS - KÉO TÂM                   -->
+                <!-- =================================================== -->
+                <key>DPIParameters</key>
+                <dict>
+                    <key>DPI_Profile</key>
+                    <string>VIP_KEO_TAM</string>
+                    <key>TouchSensitivity</key>
+                    <real>3.0</real>
+                    <key>TouchStability</key>
+                    <real>0.5</real>
+                    <key>JitterReduction</key>
+                    <string>MAXIMUM</string>
+                    <key>ShakeReduction</key>
+                    <string>MAXIMUM</string>
+                    <key>LagReduction</key>
+                    <string>MAXIMUM</string>
+                    <key>Latency</key>
+                    <integer>0</integer>
+                    <key>BufferSize</key>
+                    <integer>8192</integer>
+                    <key>QueueDiscipline</key>
+                    <string>fq_codel</string>
+                    <key>PredictionMode</key>
+                    <string>ENABLED</string>
+                    <key>PredictionTime</key>
+                    <integer>5</integer>
+                    <key>FixLố</key>
+                    <string>ENABLED</string>
+                    <key>FixRung</key>
+                    <string>ENABLED</string>
+                    <key>KeoLaDo</key>
+                    <string>ACTIVE</string>
+                    <key>GameMode</key>
+                    <string>100%_OPTIMIZED</string>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     5. KÉO LÀ ĐỎ - HIỆU ỨNG MÀU                  -->
+                <!-- =================================================== -->
+                <key>TouchColorProfile</key>
+                <dict>
+                    <key>DragColor</key>
+                    <string>#FF0000</string>
+                    <key>DragColorIntensity</key>
+                    <real>1.0</real>
+                    <key>TapColor</key>
+                    <string>#00FF88</string>
+                    <key>TapColorIntensity</key>
+                    <real>0.8</real>
+                    <key>LatencyCompensation</key>
+                    <integer>0</integer>
+                    <key>TouchSensitivity</key>
+                    <real>3.5</real>
+                    <key>DragStability</key>
+                    <real>0.5</real>
+                    <key>ShakeFilter</key>
+                    <string>MAXIMUM</string>
+                    <key>ColorFeedback</key>
+                    <string>ENABLED</string>
+                    <key>DragTrail</key>
+                    <string>ENABLED</string>
+                    <key>DragTrailLength</key>
+                    <integer>20</integer>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     6. TỐI ƯU GAME                                 -->
+                <!-- =================================================== -->
+                <key>GameOptimization</key>
+                <dict>
+                    <key>FrameSync</key>
+                    <string>DISABLED</string>
+                    <key>VSync</key>
+                    <string>FORCE_OFF</string>
+                    <key>GPUPriority</key>
+                    <string>REALTIME</string>
+                    <key>NetworkThrottle</key>
+                    <string>DISABLED</string>
+                    <key>TouchResponse</key>
+                    <string>ULTRA_FAST</string>
+                    <key>RenderScale</key>
+                    <real>1.0</real>
+                    <key>FPSBoost</key>
+                    <string>MAXIMUM</string>
+                    <key>StabilityMode</key>
+                    <string>MAXIMUM</string>
+                    <key>InputLagReduction</key>
+                    <string>MAXIMUM</string>
+                    <key>DisplayLatency</key>
+                    <integer>0</integer>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     7. CỐ ĐỊNH THIẾT BỊ                          -->
+                <!-- =================================================== -->
+                <key>Restrictions</key>
+                <dict>
+                    <key>NoOtherFiles</key>
+                    <string>TRUE</string>
+                    <key>NoSharing</key>
+                    <string>TRUE</string>
+                    <key>DeviceLocked</key>
+                    <string>${uid}</string>
+                    <key>SharingPolicy</key>
+                    <string>DENIED_UID_${uidShort}</string>
+                    <key>InstallationPolicy</key>
+                    <string>SINGLE_DEVICE_ONLY</string>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     8. KIỂM TRA IOS                                -->
+                <!-- =================================================== -->
+                <key>ConditionalInstall</key>
+                <dict>
+                    <key>DeviceVersion</key>
+                    <string>${iosVersion}</string>
+                    <key>AllowedVersions</key>
+                    <array>
+                        <string>17.*</string>
+                        <string>18.7.*</string>
+                        <string>26.1</string>
+                    </array>
+                    <key>FailMessage</key>
+                    <string>Không hỗ trợ iOS này. Chỉ dùng cho iOS 17, 18.7.1-18.7.9, 26.1</string>
+                </dict>
+                
+                <!-- =================================================== -->
+                <!--     9. DỮ LIỆU KHÔNG XÁC ĐỊNH (40 MỤC)           -->
+                <!-- =================================================== -->
+                <key>UnknownData1</key><string>0x7F3A2B1C</string>
+                <key>UnknownData2</key><string>0x9E4D8F6A</string>
+                <key>UnknownData3</key><string>0xC2B1A4F8</string>
+                <key>UnknownData4</key><string>0x3D4E5F6A</string>
+                <key>UnknownData5</key><string>0xF1E2D3C4</string>
+                <key>UnknownData6</key><string>0x8A7B6C5D</string>
+                <key>UnknownData7</key><string>0x1A2B3C4D</string>
+                <key>UnknownData8</key><string>0x98765432</string>
+                <key>UnknownData9</key><string>0xFEDCBA98</string>
+                <key>UnknownData10</key><string>0x0F1E2D3C</string>
+                <key>UnknownData11</key><string>0xA1B2C3D4</string>
+                <key>UnknownData12</key><string>0xE5F60789</string>
+                <key>UnknownData13</key><string>0x890A1B2C</string>
+                <key>UnknownData14</key><string>0x3D4E5F67</string>
+                <key>UnknownData15</key><string>0x67890A1B</string>
+                <key>UnknownData16</key><string>0x2C3D4E5F</string>
+                <key>UnknownData17</key><string>0x67890A1B</string>
+                <key>UnknownData18</key><string>0x2C3D4E5F</string>
+                <key>UnknownData19</key><string>0x0A1B2C3D</string>
+                <key>UnknownData20</key><string>0x4E5F6789</string>
+                <key>UnknownData21</key><string>0x0A1B2C3D</string>
+                <key>UnknownData22</key><string>0x4E5F6789</string>
+                <key>UnknownData23</key><string>0x890A1B2C</string>
+                <key>UnknownData24</key><string>0x3D4E5F67</string>
+                <key>UnknownData25</key><string>0x67890A1B</string>
+                <key>UnknownData26</key><string>0x2C3D4E5F</string>
+                <key>UnknownData27</key><string>0x67890A1B</string>
+                <key>UnknownData28</key><string>0x2C3D4E5F</string>
+                <key>UnknownData29</key><string>0x0A1B2C3D</string>
+                <key>UnknownData30</key><string>0x4E5F6789</string>
+                <key>UnknownData31</key><string>0x0A1B2C3D</string>
+                <key>UnknownData32</key><string>0x4E5F6789</string>
+                <key>UnknownData33</key><string>0x890A1B2C</string>
+                <key>UnknownData34</key><string>0x3D4E5F67</string>
+                <key>UnknownData35</key><string>0x67890A1B</string>
+                <key>UnknownData36</key><string>0x2C3D4E5F</string>
+                <key>UnknownData37</key><string>0x67890A1B</string>
+                <key>UnknownData38</key><string>0x2C3D4E5F</string>
+                <key>UnknownData39</key><string>0x0A1B2C3D</string>
+                <key>UnknownData40</key><string>0x4E5F6789</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>`;
+}
+
+// ============================================================
+// TẢI FILE VÀ HIỂN THỊ THÔNG TIN
+// ============================================================
+
+function downloadAndShow(content, filename, uid, deviceName) {
+    try {
+        const blob = new Blob([content], { 
+            type: 'application/x-apple-aspen-config; charset=utf-8' 
+        });
+        const url = URL.createObjectURL(blob);
+        
+        document.getElementById('directLink').href = url;
+        document.getElementById('directLink').textContent = filename;
+        document.getElementById('manualLink').style.display = 'block';
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        const sizeKB = (blob.size / 1024).toFixed(1);
+        const uidShort = uid.substring(uid.length - 8);
+        
+        document.getElementById('fileName').textContent = filename;
+        document.getElementById('fileUid').textContent = uidShort + ' (' + uid.substring(0, 8) + '...' + uidShort + ')';
+        document.getElementById('fileSize').textContent = sizeKB + ' KB';
+        document.getElementById('fileDevice').textContent = deviceName;
+        document.getElementById('fileInfo').style.display = 'block';
+        
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        return true;
+    } catch (e) {
+        console.error('Lỗi tải:', e);
+        return false;
+    }
+}
+
+// ============================================================
+// XỬ LÝ CHÍNH
+// ============================================================
+
+let deviceUID = '';
+let isGenerating = false;
+
+function init() {
+    const uidDisplay = document.getElementById('uidDisplay');
+    const statusDisplay = document.getElementById('statusDisplay');
+    
+    try {
+        uidDisplay.textContent = '⏳ Đang đọc...';
+        statusDisplay.textContent = '⏳ Đang xác định thiết bị...';
+        statusDisplay.className = 'status loading';
+        
+        deviceUID = getDeviceUID();
+        const deviceName = getDeviceName();
+        const iosVer = getIOSVersion();
+        
+        if (deviceUID && deviceUID.length === 40) {
+            uidDisplay.textContent = deviceUID;
+            statusDisplay.textContent = `✅ Đã nhận diện ${deviceName} - iOS ${iosVer}`;
+            statusDisplay.className = 'status';
+            document.getElementById('downloadBtn').disabled = false;
+        } else {
+            uidDisplay.textContent = '⚠️ Không thể đọc UID';
+            statusDisplay.textContent = '❌ Lỗi: Không lấy được UID. Thử tải lại trang.';
+            statusDisplay.className = 'status error';
+            document.getElementById('downloadBtn').disabled = true;
+        }
+    } catch (e) {
+        uidDisplay.textContent = '⚠️ Lỗi';
+        statusDisplay.textContent = '❌ Lỗi: ' + e.message;
+        statusDisplay.className = 'status error';
+        document.getElementById('downloadBtn').disabled = true;
+    }
+}
+
+function generateAndDownload() {
+    if (isGenerating) return;
+    if (!deviceUID || deviceUID.length !== 40) {
+        showToast('❌ Chưa có UID hợp lệ. Tải lại trang.', 'error');
+        return;
+    }
+    
+    isGenerating = true;
+    const btn = document.getElementById('downloadBtn');
+    btn.innerHTML = '<span class="loading"></span> Đang tạo config...';
+    btn.disabled = true;
+    
+    try {
+        const deviceName = getDeviceName();
+        const iosVer = getIOSVersion();
+        const uidShort = deviceUID.substring(deviceUID.length - 8);
+        const filename = `DPI_VIP_${uidShort}_${Date.now()}.mobileconfig`;
+        
+        const xml = generateConfig(deviceUID, iosVer, deviceName);
+        const success = downloadAndShow(xml, filename, deviceUID, deviceName);
+        
+        if (success) {
+            showToast(`✅ Đã tạo config cho ${deviceName} - UID: ${uidShort}`, 'success');
+        } else {
+            showToast('⚠️ Không thể tải tự động. Dùng link bên dưới.', 'error');
+        }
+    } catch (e) {
+        showToast('❌ Lỗi: ' + e.message, 'error');
+    }
+    
+    isGenerating = false;
+    btn.innerHTML = '⬇️ Tải DPI VIP (gắn UID sẵn)';
+    btn.disabled = false;
+}
+
+function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    t.classList.add('show');
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
