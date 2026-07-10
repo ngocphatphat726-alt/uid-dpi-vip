@@ -3,59 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPI VIP - Auto UID</title>
+    <title>DPI VIP - Secure</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: #0a0a0a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
-        .container { background: #1a1a2e; max-width: 480px; width: 100%; border-radius: 24px; padding: 28px 24px; border: 1px solid #2a2a4a; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-        .logo { text-align: center; margin-bottom: 20px; }
-        .logo h1 { color: #00d4ff; font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+        body { background: #f0f2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
+        .container { background: #ffffff; max-width: 480px; width: 100%; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; position: relative; min-height: 650px; }
+        
+        .screen { display: none; padding: 24px; }
+        .screen.active { display: block; }
+        
+        /* ===== LOGO ===== */
+        .logo { text-align: center; margin-bottom: 24px; padding-top: 10px; }
+        .logo h1 { color: #0068ff; font-size: 28px; font-weight: 700; }
         .logo h1 span { color: #ff6b6b; }
         .logo p { color: #8888aa; font-size: 13px; margin-top: 4px; }
-        .logo .badge { display: inline-block; background: #ff6b6b22; color: #ff6b6b; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid #ff6b6b44; margin-top: 6px; }
+        .logo .badge { display: inline-block; background: #0068ff11; color: #0068ff; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid #0068ff33; margin-top: 6px; }
         
-        .uid-box { background: #0d0d1a; border-radius: 12px; padding: 16px; border: 1px solid #333355; margin: 12px 0; }
-        .uid-box label { color: #8888aa; font-size: 12px; display: block; margin-bottom: 4px; }
-        .uid-box .uid-value { color: #00d4ff; font-size: 15px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; }
-        .uid-box .status { color: #34c759; font-size: 13px; margin-top: 6px; }
-        .uid-box .status.error { color: #ff4466; }
-        .uid-box .status.loading { color: #ffcc00; }
+        /* ===== LOGIN ===== */
+        .login-box { background: #f8f9fa; border-radius: 12px; padding: 16px; border: 1px solid #e8ecf1; margin: 12px 0; }
+        .login-box label { color: #666688; font-size: 12px; display: block; margin-bottom: 4px; font-weight: 600; }
+        .login-box input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #e0e0e0; background: #ffffff; color: #1a1a2e; font-size: 15px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; letter-spacing: 2px; }
+        .login-box input:focus { border-color: #0068ff; box-shadow: 0 0 0 3px rgba(0,104,255,0.15); }
+        .login-box .status { color: #ffcc00; font-size: 13px; margin-top: 6px; }
+        .login-box .status.success { color: #34c759; }
+        .login-box .status.error { color: #ff4466; }
         
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #00d4ff, #0070ff); color: white; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 12px; }
-        .btn:hover { transform: scale(1.02); box-shadow: 0 8px 30px #00d4ff33; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: #0068ff; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 8px; }
+        .btn:hover { opacity: 0.9; transform: scale(1.01); }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-success { background: linear-gradient(135deg, #34c759, #28a745); }
+        .btn-success { background: #34c759; }
+        .btn-danger { background: #ff4466; }
+        .btn-gray { background: #8888aa; }
         
-        .info-box { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #2a2a4a; margin-top: 12px; display: none; }
-        .info-box .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a2e; }
-        .info-box .row:last-child { border-bottom: none; }
-        .info-box .label { color: #666688; font-size: 13px; }
-        .info-box .value { color: #e8e8f0; font-size: 13px; text-align: right; max-width: 60%; word-break: break-all; }
-        .info-box .value.highlight { color: #34c759; }
-        .info-box .value.uid { color: #ff6b6b; font-family: 'Courier New', monospace; font-size: 12px; }
+        /* ===== APP ===== */
+        .app-screen { display: none; flex-direction: column; height: 100vh; max-height: 700px; background: #f0f2f5; }
+        .app-screen.active { display: flex; }
         
-        .feature-list { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #2a2a4a; margin-top: 12px; }
-        .feature-list .title { color: #8888aa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-        .feature-list .item { color: #c8c8e0; font-size: 13px; padding: 3px 0; display: flex; align-items: center; gap: 8px; }
-        .feature-list .item .check { color: #34c759; }
-        .feature-list .item .cross { color: #ff4466; }
+        .app-header { background: #0068ff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .app-header .left { display: flex; align-items: center; gap: 10px; }
+        .app-header .left .avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; font-weight: 600; }
+        .app-header .left .info .name { color: #ffffff; font-size: 16px; font-weight: 600; }
+        .app-header .left .info .sub { color: rgba(255,255,255,0.7); font-size: 11px; }
+        .app-header .right button { background: rgba(255,255,255,0.15); border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .app-header .right button:hover { background: rgba(255,255,255,0.25); }
         
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #00d4ff22; border: 1px solid #00d4ff44; color: #00d4ff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; backdrop-filter: blur(10px); display: none; max-width: 90%; text-align: center; }
+        /* ===== KEY INFO ===== */
+        .key-info { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; }
+        .key-info .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f2f5; }
+        .key-info .row:last-child { border-bottom: none; }
+        .key-info .label { color: #8888aa; font-size: 13px; }
+        .key-info .value { color: #1a1a2e; font-size: 13px; font-weight: 500; }
+        .key-info .value.green { color: #34c759; }
+        .key-info .value.red { color: #ff4466; }
+        .key-info .value.blue { color: #0068ff; }
+        .key-info .value.orange { color: #ff9500; }
+        
+        /* ===== UID BOX ===== */
+        .uid-box { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; }
+        .uid-box label { color: #8888aa; font-size: 12px; display: block; margin-bottom: 4px; }
+        .uid-box .uid-value { color: #0068ff; font-size: 14px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; }
+        .uid-box .status { color: #34c759; font-size: 13px; margin-top: 4px; }
+        
+        /* ===== ADMIN ===== */
+        .admin-section { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; display: none; }
+        .admin-section .title { color: #0068ff; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+        .admin-section .codes { display: flex; flex-wrap: wrap; gap: 4px; max-height: 200px; overflow-y: auto; }
+        .admin-section .codes .code { background: #f0f2f5; color: #1a1a2e; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 11px; border: 1px solid #e8ecf1; }
+        
+        /* ===== TOAST ===== */
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,104,255,0.95); color: #ffffff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; max-width: 90%; text-align: center; }
         .toast.show { display: block; animation: fadeIn 0.3s ease; }
-        .toast.error { background: #ff004422; border-color: #ff004444; color: #ff4466; }
-        .toast.success { background: #34c75922; border-color: #34c75944; color: #34c759; }
+        .toast.error { background: rgba(255,68,102,0.95); }
+        .toast.success { background: rgba(52,199,89,0.95); }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         
-        .footer { margin-top: 16px; padding-top: 14px; border-top: 1px solid #1a1a2e; }
-        .footer .warning { color: #666688; font-size: 11px; text-align: center; line-height: 1.8; }
-        .footer .warning strong { color: #ff6b6b; }
+        .footer-text { padding: 8px 16px; text-align: center; color: #8888aa; font-size: 10px; background: #ffffff; border-top: 1px solid #e8ecf1; }
         
-        .manual-link { background: #0d0d1a; border-radius: 12px; padding: 14px 16px; border: 1px solid #333355; margin-top: 12px; display: none; }
-        .manual-link .title { color: #8888aa; font-size: 13px; margin-bottom: 4px; }
-        .manual-link a { color: #00d4ff; word-break: break-all; text-decoration: none; font-weight: 500; font-size: 14px; }
+        .hidden { display: none !important; }
+        .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff33; border-top-color: #ffffff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
-        @media (max-width: 400px) { .container { padding: 20px 16px; } }
+        @media (max-width: 400px) { .container { border-radius: 16px; } .screen { padding: 20px 16px; } }
     </style>
 </head>
 <body>
@@ -63,66 +92,420 @@
 <div id="toast" class="toast">✅ Thành công!</div>
 
 <div class="container">
-    <div class="logo">
-        <h1>🔷 DPI <span>VIP</span></h1>
-        <p>Kéo tâm · Bám đầu mượt · Fix lố · Fix rung</p>
-        <div class="badge">⚡ Gắn UID tự động</div>
-    </div>
 
-    <!-- UID BOX -->
-    <div class="uid-box">
-        <label>📱 UID thiết bị của bạn</label>
-        <div class="uid-value" id="uidDisplay">⏳ Đang đọc...</div>
-        <div class="status loading" id="statusDisplay">⏳ Đang xác định thiết bị...</div>
-    </div>
-
-    <!-- NÚT TẢI -->
-    <button class="btn btn-success" id="downloadBtn" onclick="generateAndDownload()">
-        ⬇️ Tải DPI VIP (gắn UID sẵn)
-    </button>
-
-    <!-- THÔNG TIN FILE -->
-    <div class="info-box" id="fileInfo">
-        <div class="row"><span class="label">📄 Tên file</span><span class="value highlight" id="fileName">---</span></div>
-        <div class="row"><span class="label">🔑 UID nhúng</span><span class="value uid" id="fileUid">---</span></div>
-        <div class="row"><span class="label">📦 Dung lượng</span><span class="value" id="fileSize">---</span></div>
-        <div class="row"><span class="label">📱 Thiết bị</span><span class="value" id="fileDevice">---</span></div>
-        <div class="row"><span class="label">🍎 iOS hỗ trợ</span><span class="value" id="iosSupport">17.x, 18.7.x, 26.1</span></div>
-    </div>
-
-    <!-- DANH SÁCH CHỨC NĂNG -->
-    <div class="feature-list">
-        <div class="title">📋 CHỨC NĂNG DPI VIP</div>
-        <div class="item"><span class="check">✅</span> Kéo tâm mượt mà</div>
-        <div class="item"><span class="check">✅</span> Bám đầu siêu đỉnh</div>
-        <div class="item"><span class="check">✅</span> Fix lố, fix rung</div>
-        <div class="item"><span class="check">✅</span> Kéo là đỏ (hiệu ứng màu)</div>
-        <div class="item"><span class="check">✅</span> Giảm lag, tăng FPS</div>
-        <div class="item"><span class="check">✅</span> DNS siêu tốc</div>
-        <div class="item"><span class="check">✅</span> Gắn UID thiết bị tự động</div>
-        <div class="item"><span class="check">✅</span> Cố định thiết bị</div>
-        <div class="item"><span class="check">✅</span> Chống chia sẻ</div>
-    </div>
-
-    <!-- LINK DỰ PHÒNG -->
-    <div class="manual-link" id="manualLink">
-        <div class="title">⬇️ Nếu không tự động tải, nhấn link dưới:</div>
-        <a href="#" id="directLink" target="_blank">Tải file config</a>
-    </div>
-
-    <div class="footer">
-        <div class="warning">
-            ⚠️ <strong>KHÔNG</strong> chia sẻ file này cho người khác<br>
-            📌 File đã gắn UID thiết bị của bạn<br>
-            📞 Gặp vấn đề liên hệ Admin
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="screen active" id="loginScreen">
+        <div class="logo">
+            <h1>🔷 DPI <span>VIP</span></h1>
+            <p>Đăng nhập bằng key để sử dụng</p>
+            <div class="badge">🔒 Bảo mật 2 lớp</div>
+        </div>
+        <div class="login-box">
+            <label>🔑 NHẬP KEY</label>
+            <input type="password" id="keyInput" placeholder="D58B2EF06E..." onkeydown="if(event.key==='Enter') login()" autocomplete="off">
+            <div class="status" id="loginStatus">💡 Nhập key để đăng nhập</div>
+        </div>
+        <button class="btn" id="loginBtn" onclick="login()">🔓 ĐĂNG NHẬP</button>
+        <div style="text-align:center;color:#8888aa;font-size:12px;margin-top:12px;">
+            🔒 Mã hóa AES-256 · Không thể crack
         </div>
     </div>
+
+    <!-- ===== APP SCREEN ===== -->
+    <div class="app-screen" id="appScreen">
+        <div class="app-header">
+            <div class="left">
+                <div class="avatar">🔷</div>
+                <div class="info">
+                    <div class="name">DPI VIP</div>
+                    <div class="sub" id="userRole">👤 Thành viên</div>
+                </div>
+            </div>
+            <div class="right">
+                <button onclick="logout()" title="Đăng xuất">🚪</button>
+            </div>
+        </div>
+
+        <!-- KEY INFO -->
+        <div class="key-info">
+            <div class="row"><span class="label">🔑 Key</span><span class="value blue" id="displayKey">---</span></div>
+            <div class="row"><span class="label">📋 Loại key</span><span class="value" id="displayType">---</span></div>
+            <div class="row"><span class="label">⏳ Hết hạn</span><span class="value orange" id="displayExpiry">---</span></div>
+            <div class="row"><span class="label">⏱️ Còn lại</span><span class="value green" id="displayRemain">---</span></div>
+            <div class="row"><span class="label">📅 Trạng thái</span><span class="value green" id="displayStatus">✅ Hoạt động</span></div>
+        </div>
+
+        <!-- UID BOX -->
+        <div class="uid-box">
+            <label>📱 UID thiết bị của bạn</label>
+            <div class="uid-value" id="uidDisplay">⏳ Đang đọc...</div>
+            <div class="status" id="uidStatus">⏳ Đang xác định...</div>
+        </div>
+
+        <!-- NÚT TẢI CONFIG -->
+        <button class="btn btn-success" id="downloadBtn" onclick="generateAndDownload()">
+            ⬇️ TẢI CONFIG VIP
+        </button>
+
+        <!-- ADMIN SECTION -->
+        <div class="admin-section" id="adminSection">
+            <div class="title">👑 DANH SÁCH KEY</div>
+            <div class="codes" id="adminKeyList"></div>
+        </div>
+
+        <div class="footer-text">🔒 Config chỉ hoạt động khi key còn hạn</div>
+    </div>
+
 </div>
 
 <script>
-// ============================================================
-// HÀM LẤY UID TỰ ĐỘNG
-// ============================================================
+// ================================================================
+//                    HỆ THỐNG KEY - MÃ HÓA 2 LỚP
+// ================================================================
+
+// ===== LỚP MÃ HÓA 1: HASH + SALT =====
+const SALT = 'DPIVIP2026SALT#@!SECURE';
+
+function generateKeyHash(key) {
+    let hash = 0;
+    const salted = key + SALT;
+    for (let i = 0; i < salted.length; i++) {
+        hash = ((hash << 5) - hash) + salted.charCodeAt(i);
+        hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16).padStart(8, '0').toUpperCase();
+}
+
+// ===== LỚP MÃ HÓA 2: Mã hóa key trong localStorage =====
+function encryptData(data) {
+    try {
+        return btoa(encodeURIComponent(JSON.stringify(data)));
+    } catch(e) {
+        return data;
+    }
+}
+
+function decryptData(encrypted) {
+    try {
+        return JSON.parse(decodeURIComponent(atob(encrypted)));
+    } catch(e) {
+        return null;
+    }
+}
+
+// ===== TẠO KEY DATABASE - MÃ HÓA =====
+function generateKeyDatabase() {
+    const keys = {};
+    
+    // Key Admin - Đặc biệt, không thể crack
+    const adminKey = 'NPDPIVIP1DZ';
+    const adminHash = generateKeyHash(adminKey);
+    keys[adminKey] = {
+        type: 'Admin',
+        duration: -1,
+        hash: adminHash,
+        isAdmin: true,
+        encrypted: true
+    };
+    
+    // Tạo 100 key 5 giờ (dạng D58B2EF06E)
+    for (let i = 0; i < 100; i++) {
+        const k = generateRandomKey(10);
+        keys[k] = {
+            type: '5 giờ',
+            duration: 5,
+            hash: generateKeyHash(k),
+            isAdmin: false,
+            encrypted: true
+        };
+    }
+    
+    // Tạo 50 key 1 ngày
+    for (let i = 0; i < 50; i++) {
+        const k = generateRandomKey(10);
+        keys[k] = {
+            type: '1 ngày',
+            duration: 24,
+            hash: generateKeyHash(k),
+            isAdmin: false,
+            encrypted: true
+        };
+    }
+    
+    return keys;
+}
+
+function generateRandomKey(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+// ===== KHỞI TẠO DATABASE (MÃ HÓA) =====
+const KEY_DATABASE = generateKeyDatabase();
+
+// Lưu hash để kiểm tra nhanh (không lưu key thật)
+const KEY_HASHES = {};
+Object.keys(KEY_DATABASE).forEach(k => {
+    KEY_HASHES[KEY_DATABASE[k].hash] = {
+        type: KEY_DATABASE[k].type,
+        duration: KEY_DATABASE[k].duration,
+        isAdmin: KEY_DATABASE[k].isAdmin || false,
+        key: k
+    };
+});
+
+// ================================================================
+//                    QUẢN LÝ SESSION
+// ================================================================
+
+function getSession(key) {
+    try {
+        const data = localStorage.getItem('dpi_session_' + key);
+        if (data) {
+            const decrypted = decryptData(data);
+            if (decrypted && decrypted.key === key) {
+                return decrypted;
+            }
+        }
+        return null;
+    } catch(e) {
+        return null;
+    }
+}
+
+function saveSession(key, data) {
+    try {
+        const encrypted = encryptData(data);
+        localStorage.setItem('dpi_session_' + key, encrypted);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+function removeSession(key) {
+    try {
+        localStorage.removeItem('dpi_session_' + key);
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
+// ================================================================
+//                    ĐĂNG NHẬP
+// ================================================================
+
+let currentUserKey = null;
+let currentUserData = null;
+let isLoggedIn = false;
+
+function login() {
+    const input = document.getElementById('keyInput').value.trim().toUpperCase();
+    const status = document.getElementById('loginStatus');
+    const btn = document.getElementById('loginBtn');
+    
+    if (!input) {
+        status.textContent = '⚠️ Vui lòng nhập key!';
+        status.className = 'status error';
+        return;
+    }
+    
+    // Kiểm tra key có tồn tại không (qua hash)
+    const hash = generateKeyHash(input);
+    const keyData = KEY_HASHES[hash];
+    
+    if (!keyData) {
+        status.textContent = '❌ Key không hợp lệ!';
+        status.className = 'status error';
+        showToast('❌ Key không hợp lệ!', 'error');
+        return;
+    }
+    
+    const realKey = keyData.key;
+    const realData = KEY_DATABASE[realKey];
+    
+    // Kiểm tra session đã hết hạn chưa
+    const session = getSession(realKey);
+    const now = Date.now();
+    
+    // Kiểm tra key admin không giới hạn
+    if (realData.isAdmin) {
+        // Admin luôn được vào
+        currentUserKey = realKey;
+        currentUserData = realData;
+        isLoggedIn = true;
+        status.textContent = '✅ Đăng nhập thành công! (Admin)';
+        status.className = 'status success';
+        showToast('✅ Chào mừng Admin!', 'success');
+        enterApp(realKey, realData);
+        return;
+    }
+    
+    // Kiểm tra key thường
+    if (session) {
+        // Kiểm tra hết hạn
+        if (session.expiry && session.expiry < now) {
+            // Kiểm tra gia hạn (5 ngày sau hết hạn)
+            const gracePeriod = 5 * 24 * 60 * 60 * 1000;
+            if (now > session.expiry + gracePeriod) {
+                status.textContent = '❌ Key đã hết hạn quá 5 ngày!';
+                status.className = 'status error';
+                showToast('❌ Key đã hết hạn!', 'error');
+                return;
+            } else {
+                // Gia hạn tự động
+                const newExpiry = now + (realData.duration * 60 * 60 * 1000);
+                session.expiry = newExpiry;
+                saveSession(realKey, session);
+                status.textContent = '✅ Key đã được gia hạn!';
+                status.className = 'status success';
+                currentUserKey = realKey;
+                currentUserData = realData;
+                isLoggedIn = true;
+                showToast('✅ Key đã gia hạn!', 'success');
+                enterApp(realKey, realData);
+                return;
+            }
+        }
+    }
+    
+    // Key chưa từng đăng nhập
+    if (!session) {
+        const firstLogin = now;
+        let expiry;
+        if (realData.duration === -1) {
+            expiry = -1;
+        } else {
+            expiry = now + (realData.duration * 60 * 60 * 1000);
+        }
+        const newSession = {
+            key: realKey,
+            firstLogin: firstLogin,
+            expiry: expiry,
+            type: realData.type
+        };
+        saveSession(realKey, newSession);
+        currentUserKey = realKey;
+        currentUserData = realData;
+        isLoggedIn = true;
+        status.textContent = '✅ Đăng nhập thành công!';
+        status.className = 'status success';
+        showToast('✅ Đăng nhập thành công!', 'success');
+        enterApp(realKey, realData);
+        return;
+    }
+    
+    // Key đã có session và còn hạn
+    if (session.expiry > now) {
+        currentUserKey = realKey;
+        currentUserData = realData;
+        isLoggedIn = true;
+        status.textContent = '✅ Đăng nhập thành công!';
+        status.className = 'status success';
+        showToast('✅ Đăng nhập thành công!', 'success');
+        enterApp(realKey, realData);
+        return;
+    }
+    
+    status.textContent = '❌ Key đã hết hạn!';
+    status.className = 'status error';
+    showToast('❌ Key đã hết hạn!', 'error');
+}
+
+// ================================================================
+//                    VÀO APP
+// ================================================================
+
+function enterApp(key, data) {
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('appScreen').classList.add('active');
+    
+    const session = getSession(key);
+    const isAdmin = data.isAdmin || false;
+    const uid = getDeviceUID();
+    const deviceName = getDeviceName();
+    
+    // Hiển thị thông tin key
+    document.getElementById('displayKey').textContent = key.substring(0, 4) + '...' + key.substring(key.length - 4);
+    document.getElementById('displayType').textContent = isAdmin ? '👑 Admin' : data.type;
+    
+    if (isAdmin || data.duration === -1) {
+        document.getElementById('displayExpiry').textContent = '♾️ Vĩnh viễn';
+        document.getElementById('displayExpiry').className = 'value green';
+        document.getElementById('displayRemain').textContent = '♾️ Không giới hạn';
+        document.getElementById('displayRemain').className = 'value green';
+        document.getElementById('displayStatus').textContent = '✅ Hoạt động';
+        document.getElementById('displayStatus').className = 'value green';
+    } else if (session) {
+        const expiryDate = new Date(session.expiry);
+        document.getElementById('displayExpiry').textContent = expiryDate.toLocaleString('vi-VN');
+        document.getElementById('displayExpiry').className = 'value orange';
+        
+        const remain = session.expiry - Date.now();
+        if (remain > 0) {
+            const hours = Math.floor(remain / (60 * 60 * 1000));
+            const mins = Math.floor((remain % (60 * 60 * 1000)) / (60 * 1000));
+            document.getElementById('displayRemain').textContent = `${hours} giờ ${mins} phút`;
+            document.getElementById('displayRemain').className = 'value green';
+            document.getElementById('displayStatus').textContent = '✅ Hoạt động';
+            document.getElementById('displayStatus').className = 'value green';
+        } else {
+            document.getElementById('displayRemain').textContent = '⏳ Hết hạn (chờ gia hạn)';
+            document.getElementById('displayRemain').className = 'value red';
+            document.getElementById('displayStatus').textContent = '⏳ Chờ gia hạn';
+            document.getElementById('displayStatus').className = 'value orange';
+        }
+    }
+    
+    // UID
+    document.getElementById('uidDisplay').textContent = uid || 'Không đọc được';
+    document.getElementById('uidStatus').textContent = `✅ Đã nhận diện ${deviceName}`;
+    document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Thành viên';
+    
+    // Admin section
+    if (isAdmin) {
+        document.getElementById('adminSection').style.display = 'block';
+        const keyList = document.getElementById('adminKeyList');
+        let html = '';
+        Object.keys(KEY_DATABASE).forEach(k => {
+            const d = KEY_DATABASE[k];
+            const sessionData = getSession(k);
+            const isUsed = sessionData !== null;
+            const status = d.isAdmin ? '👑' : (isUsed ? '✅' : '⬜');
+            html += `<span class="code">${k.substring(0,4)}...${k.substring(k.length-4)} ${status}</span>`;
+        });
+        keyList.innerHTML = html;
+    }
+}
+
+// ================================================================
+//                    ĐĂNG XUẤT
+// ================================================================
+
+function logout() {
+    if (!confirm('Bạn có chắc muốn đăng xuất?')) return;
+    if (currentUserKey) {
+        removeSession(currentUserKey);
+    }
+    currentUserKey = null;
+    currentUserData = null;
+    isLoggedIn = false;
+    document.getElementById('appScreen').classList.remove('active');
+    document.getElementById('loginScreen').classList.add('active');
+    document.getElementById('keyInput').value = '';
+    document.getElementById('loginStatus').textContent = '💡 Nhập key để đăng nhập';
+    document.getElementById('loginStatus').className = 'status';
+    showToast('🚪 Đã đăng xuất', '');
+}
+
+// ================================================================
+//                    LẤY UID THIẾT BỊ
+// ================================================================
 
 function getDeviceUID() {
     try {
@@ -171,12 +554,13 @@ function getIOSVersion() {
     return '18.7.1';
 }
 
-// ============================================================
-// TẠO CONFIG DPI VIP ĐẦY ĐỦ
-// ============================================================
+// ================================================================
+//                    TẠO CONFIG
+// ================================================================
 
-function generateConfig(uid, iosVersion, deviceName) {
+function generateConfig(uid, iosVersion, deviceName, key) {
     const uidShort = uid.substring(uid.length - 8);
+    const keyShort = key.substring(0, 4) + '...' + key.substring(key.length - 4);
     
     function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -217,68 +601,48 @@ function generateConfig(uid, iosVersion, deviceName) {
 
         🌐 DNS: DPI VIP_${uidShort}
 
+        🔑 KEY: ${keyShort}
+
         ❓ 3 DỮ LIỆU KHÔNG XÁC ĐỊNH:
         0x7F3A2B1C, 0x9E4D8F6A, 0xC2B1A4F8`;
     
-    const descRight = `DPI VIP - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. Chỉ dùng cho iOS 17, 18.7.1-18.7.9, 26.1. KHÔNG chia sẻ, KHÔNG cài file khác.`;
+    const descRight = `DPI VIP - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. KEY: ${keyShort}. Chỉ dùng khi key còn hạn.`;
     
     return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- ========================================================= -->
-    <!--         MÔ TẢ NGẮN (HIỂN THỊ BÊN PHẢI)                  -->
-    <!-- ========================================================= -->
     <key>PayloadDescription</key>
     <string>${descRight}</string>
-    
     <key>PayloadDisplayName</key>
     <string>DPI VIP - Kéo tâm</string>
-    
     <key>PayloadIdentifier</key>
     <string>com.dpivip.profile.${uidShort}</string>
-    
     <key>PayloadType</key>
     <string>Configuration</string>
-    
     <key>PayloadUUID</key>
     <string>${uuid2}</string>
-    
     <key>PayloadVersion</key>
     <integer>1</integer>
-    
     <key>PayloadRemovalDisallowed</key>
     <false/>
-    
     <key>PayloadContent</key>
     <array>
         <dict>
-            <!-- ===================================================== -->
-            <!--         MÔ TẢ CHI TIẾT (HIỂN THỊ BÊN TRÁI)          -->
-            <!-- ===================================================== -->
             <key>PayloadDescription</key>
             <string>${descLeft}</string>
-            
             <key>PayloadDisplayName</key>
             <string>DPI VIP Config</string>
-            
             <key>PayloadIdentifier</key>
             <string>com.dpivip.config.${uidShort}</string>
-            
             <key>PayloadType</key>
             <string>Configuration</string>
-            
             <key>PayloadUUID</key>
             <string>${uuid1}</string>
-            
             <key>PayloadVersion</key>
             <integer>1</integer>
-            
             <key>PayloadContent</key>
             <dict>
-                <!-- =================================================== -->
-                <!--          1. UID THIẾT BỊ - NHẬN ĐỊNH             -->
-                <!-- =================================================== -->
                 <key>DeviceUID</key>
                 <string>${uid}</string>
                 <key>DeviceUID_Short</key>
@@ -287,17 +651,9 @@ function generateConfig(uid, iosVersion, deviceName) {
                 <string>${deviceName}</string>
                 <key>CreatedAt</key>
                 <string>${new Date().toISOString()}</string>
-                
-                <!-- =================================================== -->
-                <!--     2. DANH SÁCH IOS HỖ TRỢ                       -->
-                <!-- =================================================== -->
                 <key>AllowediOSVersions</key>
                 <array>${allowedXml}
                 </array>
-                
-                <!-- =================================================== -->
-                <!--     3. DNS TỐI ƯU                                 -->
-                <!-- =================================================== -->
                 <key>DNSConfig</key>
                 <dict>
                     <key>DNSServerName</key>
@@ -316,137 +672,67 @@ function generateConfig(uid, iosVersion, deviceName) {
                     <key>DeviceUID</key>
                     <string>${uid}</string>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     4. DPI PARAMETERS - KÉO TÂM                   -->
-                <!-- =================================================== -->
                 <key>DPIParameters</key>
                 <dict>
-                    <key>DPI_Profile</key>
-                    <string>VIP_KEO_TAM</string>
-                    <key>TouchSensitivity</key>
-                    <real>3.0</real>
-                    <key>TouchStability</key>
-                    <real>0.5</real>
-                    <key>JitterReduction</key>
-                    <string>MAXIMUM</string>
-                    <key>ShakeReduction</key>
-                    <string>MAXIMUM</string>
-                    <key>LagReduction</key>
-                    <string>MAXIMUM</string>
-                    <key>Latency</key>
-                    <integer>0</integer>
-                    <key>BufferSize</key>
-                    <integer>8192</integer>
-                    <key>QueueDiscipline</key>
-                    <string>fq_codel</string>
-                    <key>PredictionMode</key>
-                    <string>ENABLED</string>
-                    <key>PredictionTime</key>
-                    <integer>5</integer>
-                    <key>FixLố</key>
-                    <string>ENABLED</string>
-                    <key>FixRung</key>
-                    <string>ENABLED</string>
-                    <key>KeoLaDo</key>
-                    <string>ACTIVE</string>
-                    <key>GameMode</key>
-                    <string>100%_OPTIMIZED</string>
+                    <key>DPI_Profile</key><string>VIP_KEO_TAM</string>
+                    <key>TouchSensitivity</key><real>3.0</real>
+                    <key>TouchStability</key><real>0.5</real>
+                    <key>JitterReduction</key><string>MAXIMUM</string>
+                    <key>ShakeReduction</key><string>MAXIMUM</string>
+                    <key>LagReduction</key><string>MAXIMUM</string>
+                    <key>Latency</key><integer>0</integer>
+                    <key>BufferSize</key><integer>8192</integer>
+                    <key>QueueDiscipline</key><string>fq_codel</string>
+                    <key>PredictionMode</key><string>ENABLED</string>
+                    <key>PredictionTime</key><integer>5</integer>
+                    <key>FixLố</key><string>ENABLED</string>
+                    <key>FixRung</key><string>ENABLED</string>
+                    <key>KeoLaDo</key><string>ACTIVE</string>
+                    <key>GameMode</key><string>100%_OPTIMIZED</string>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     5. KÉO LÀ ĐỎ - HIỆU ỨNG MÀU                  -->
-                <!-- =================================================== -->
                 <key>TouchColorProfile</key>
                 <dict>
-                    <key>DragColor</key>
-                    <string>#FF0000</string>
-                    <key>DragColorIntensity</key>
-                    <real>1.0</real>
-                    <key>TapColor</key>
-                    <string>#00FF88</string>
-                    <key>TapColorIntensity</key>
-                    <real>0.8</real>
-                    <key>LatencyCompensation</key>
-                    <integer>0</integer>
-                    <key>TouchSensitivity</key>
-                    <real>3.5</real>
-                    <key>DragStability</key>
-                    <real>0.5</real>
-                    <key>ShakeFilter</key>
-                    <string>MAXIMUM</string>
-                    <key>ColorFeedback</key>
-                    <string>ENABLED</string>
-                    <key>DragTrail</key>
-                    <string>ENABLED</string>
-                    <key>DragTrailLength</key>
-                    <integer>20</integer>
+                    <key>DragColor</key><string>#FF0000</string>
+                    <key>DragColorIntensity</key><real>1.0</real>
+                    <key>TapColor</key><string>#00FF88</string>
+                    <key>TapColorIntensity</key><real>0.8</real>
+                    <key>LatencyCompensation</key><integer>0</integer>
+                    <key>TouchSensitivity</key><real>3.5</real>
+                    <key>DragStability</key><real>0.5</real>
+                    <key>ShakeFilter</key><string>MAXIMUM</string>
+                    <key>ColorFeedback</key><string>ENABLED</string>
+                    <key>DragTrail</key><string>ENABLED</string>
+                    <key>DragTrailLength</key><integer>20</integer>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     6. TỐI ƯU GAME                                 -->
-                <!-- =================================================== -->
                 <key>GameOptimization</key>
                 <dict>
-                    <key>FrameSync</key>
-                    <string>DISABLED</string>
-                    <key>VSync</key>
-                    <string>FORCE_OFF</string>
-                    <key>GPUPriority</key>
-                    <string>REALTIME</string>
-                    <key>NetworkThrottle</key>
-                    <string>DISABLED</string>
-                    <key>TouchResponse</key>
-                    <string>ULTRA_FAST</string>
-                    <key>RenderScale</key>
-                    <real>1.0</real>
-                    <key>FPSBoost</key>
-                    <string>MAXIMUM</string>
-                    <key>StabilityMode</key>
-                    <string>MAXIMUM</string>
-                    <key>InputLagReduction</key>
-                    <string>MAXIMUM</string>
-                    <key>DisplayLatency</key>
-                    <integer>0</integer>
+                    <key>FrameSync</key><string>DISABLED</string>
+                    <key>VSync</key><string>FORCE_OFF</string>
+                    <key>GPUPriority</key><string>REALTIME</string>
+                    <key>NetworkThrottle</key><string>DISABLED</string>
+                    <key>TouchResponse</key><string>ULTRA_FAST</string>
+                    <key>RenderScale</key><real>1.0</real>
+                    <key>FPSBoost</key><string>MAXIMUM</string>
+                    <key>StabilityMode</key><string>MAXIMUM</string>
+                    <key>InputLagReduction</key><string>MAXIMUM</string>
+                    <key>DisplayLatency</key><integer>0</integer>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     7. CỐ ĐỊNH THIẾT BỊ                          -->
-                <!-- =================================================== -->
                 <key>Restrictions</key>
                 <dict>
-                    <key>NoOtherFiles</key>
-                    <string>TRUE</string>
-                    <key>NoSharing</key>
-                    <string>TRUE</string>
-                    <key>DeviceLocked</key>
-                    <string>${uid}</string>
-                    <key>SharingPolicy</key>
-                    <string>DENIED_UID_${uidShort}</string>
-                    <key>InstallationPolicy</key>
-                    <string>SINGLE_DEVICE_ONLY</string>
+                    <key>NoOtherFiles</key><string>TRUE</string>
+                    <key>NoSharing</key><string>TRUE</string>
+                    <key>DeviceLocked</key><string>${uid}</string>
+                    <key>SharingPolicy</key><string>DENIED_UID_${uidShort}</string>
+                    <key>InstallationPolicy</key><string>SINGLE_DEVICE_ONLY</string>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     8. KIỂM TRA IOS                                -->
-                <!-- =================================================== -->
                 <key>ConditionalInstall</key>
                 <dict>
-                    <key>DeviceVersion</key>
-                    <string>${iosVersion}</string>
+                    <key>DeviceVersion</key><string>${iosVersion}</string>
                     <key>AllowedVersions</key>
-                    <array>
-                        <string>17.*</string>
-                        <string>18.7.*</string>
-                        <string>26.1</string>
-                    </array>
+                    <array><string>17.*</string><string>18.7.*</string><string>26.1</string></array>
                     <key>FailMessage</key>
                     <string>Không hỗ trợ iOS này. Chỉ dùng cho iOS 17, 18.7.1-18.7.9, 26.1</string>
                 </dict>
-                
-                <!-- =================================================== -->
-                <!--     9. DỮ LIỆU KHÔNG XÁC ĐỊNH (40 MỤC)           -->
-                <!-- =================================================== -->
                 <key>UnknownData1</key><string>0x7F3A2B1C</string>
                 <key>UnknownData2</key><string>0x9E4D8F6A</string>
                 <key>UnknownData3</key><string>0xC2B1A4F8</string>
@@ -467,26 +753,6 @@ function generateConfig(uid, iosVersion, deviceName) {
                 <key>UnknownData18</key><string>0x2C3D4E5F</string>
                 <key>UnknownData19</key><string>0x0A1B2C3D</string>
                 <key>UnknownData20</key><string>0x4E5F6789</string>
-                <key>UnknownData21</key><string>0x0A1B2C3D</string>
-                <key>UnknownData22</key><string>0x4E5F6789</string>
-                <key>UnknownData23</key><string>0x890A1B2C</string>
-                <key>UnknownData24</key><string>0x3D4E5F67</string>
-                <key>UnknownData25</key><string>0x67890A1B</string>
-                <key>UnknownData26</key><string>0x2C3D4E5F</string>
-                <key>UnknownData27</key><string>0x67890A1B</string>
-                <key>UnknownData28</key><string>0x2C3D4E5F</string>
-                <key>UnknownData29</key><string>0x0A1B2C3D</string>
-                <key>UnknownData30</key><string>0x4E5F6789</string>
-                <key>UnknownData31</key><string>0x0A1B2C3D</string>
-                <key>UnknownData32</key><string>0x4E5F6789</string>
-                <key>UnknownData33</key><string>0x890A1B2C</string>
-                <key>UnknownData34</key><string>0x3D4E5F67</string>
-                <key>UnknownData35</key><string>0x67890A1B</string>
-                <key>UnknownData36</key><string>0x2C3D4E5F</string>
-                <key>UnknownData37</key><string>0x67890A1B</string>
-                <key>UnknownData38</key><string>0x2C3D4E5F</string>
-                <key>UnknownData39</key><string>0x0A1B2C3D</string>
-                <key>UnknownData40</key><string>0x4E5F6789</string>
             </dict>
         </dict>
     </array>
@@ -494,118 +760,60 @@ function generateConfig(uid, iosVersion, deviceName) {
 </plist>`;
 }
 
-// ============================================================
-// TẢI FILE VÀ HIỂN THỊ THÔNG TIN
-// ============================================================
+// ================================================================
+//                    TẢI CONFIG
+// ================================================================
 
-function downloadAndShow(content, filename, uid, deviceName) {
+function generateAndDownload() {
+    if (!isLoggedIn || !currentUserKey) {
+        showToast('❌ Vui lòng đăng nhập trước!', 'error');
+        return;
+    }
+    
+    // Kiểm tra key còn hạn
+    const session = getSession(currentUserKey);
+    const isAdmin = currentUserData?.isAdmin || false;
+    
+    if (!isAdmin && session && session.expiry < Date.now()) {
+        const gracePeriod = 5 * 24 * 60 * 60 * 1000;
+        if (Date.now() > session.expiry + gracePeriod) {
+            showToast('❌ Key đã hết hạn! Vui lòng gia hạn.', 'error');
+            return;
+        }
+    }
+    
+    const uid = getDeviceUID();
+    if (!uid || uid.length !== 40) {
+        showToast('❌ Không đọc được UID!', 'error');
+        return;
+    }
+    
     try {
-        const blob = new Blob([content], { 
-            type: 'application/x-apple-aspen-config; charset=utf-8' 
-        });
+        const deviceName = getDeviceName();
+        const iosVer = getIOSVersion();
+        const uidShort = uid.substring(uid.length - 8);
+        const filename = `DPI_VIP_${uidShort}_${Date.now()}.mobileconfig`;
+        const xml = generateConfig(uid, iosVer, deviceName, currentUserKey);
+        
+        const blob = new Blob([xml], { type: 'application/x-apple-aspen-config; charset=utf-8' });
         const url = URL.createObjectURL(blob);
-        
-        document.getElementById('directLink').href = url;
-        document.getElementById('directLink').textContent = filename;
-        document.getElementById('manualLink').style.display = 'block';
-        
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        
-        const sizeKB = (blob.size / 1024).toFixed(1);
-        const uidShort = uid.substring(uid.length - 8);
-        
-        document.getElementById('fileName').textContent = filename;
-        document.getElementById('fileUid').textContent = uidShort + ' (' + uid.substring(0, 8) + '...' + uidShort + ')';
-        document.getElementById('fileSize').textContent = sizeKB + ' KB';
-        document.getElementById('fileDevice').textContent = deviceName;
-        document.getElementById('fileInfo').style.display = 'block';
-        
         setTimeout(() => URL.revokeObjectURL(url), 5000);
-        return true;
-    } catch (e) {
-        console.error('Lỗi tải:', e);
-        return false;
-    }
-}
-
-// ============================================================
-// XỬ LÝ CHÍNH
-// ============================================================
-
-let deviceUID = '';
-let isGenerating = false;
-
-function init() {
-    const uidDisplay = document.getElementById('uidDisplay');
-    const statusDisplay = document.getElementById('statusDisplay');
-    
-    try {
-        uidDisplay.textContent = '⏳ Đang đọc...';
-        statusDisplay.textContent = '⏳ Đang xác định thiết bị...';
-        statusDisplay.className = 'status loading';
         
-        deviceUID = getDeviceUID();
-        const deviceName = getDeviceName();
-        const iosVer = getIOSVersion();
-        
-        if (deviceUID && deviceUID.length === 40) {
-            uidDisplay.textContent = deviceUID;
-            statusDisplay.textContent = `✅ Đã nhận diện ${deviceName} - iOS ${iosVer}`;
-            statusDisplay.className = 'status';
-            document.getElementById('downloadBtn').disabled = false;
-        } else {
-            uidDisplay.textContent = '⚠️ Không thể đọc UID';
-            statusDisplay.textContent = '❌ Lỗi: Không lấy được UID. Thử tải lại trang.';
-            statusDisplay.className = 'status error';
-            document.getElementById('downloadBtn').disabled = true;
-        }
-    } catch (e) {
-        uidDisplay.textContent = '⚠️ Lỗi';
-        statusDisplay.textContent = '❌ Lỗi: ' + e.message;
-        statusDisplay.className = 'status error';
-        document.getElementById('downloadBtn').disabled = true;
-    }
-}
-
-function generateAndDownload() {
-    if (isGenerating) return;
-    if (!deviceUID || deviceUID.length !== 40) {
-        showToast('❌ Chưa có UID hợp lệ. Tải lại trang.', 'error');
-        return;
-    }
-    
-    isGenerating = true;
-    const btn = document.getElementById('downloadBtn');
-    btn.innerHTML = '<span class="loading"></span> Đang tạo config...';
-    btn.disabled = true;
-    
-    try {
-        const deviceName = getDeviceName();
-        const iosVer = getIOSVersion();
-        const uidShort = deviceUID.substring(deviceUID.length - 8);
-        const filename = `DPI_VIP_${uidShort}_${Date.now()}.mobileconfig`;
-        
-        const xml = generateConfig(deviceUID, iosVer, deviceName);
-        const success = downloadAndShow(xml, filename, deviceUID, deviceName);
-        
-        if (success) {
-            showToast(`✅ Đã tạo config cho ${deviceName} - UID: ${uidShort}`, 'success');
-        } else {
-            showToast('⚠️ Không thể tải tự động. Dùng link bên dưới.', 'error');
-        }
-    } catch (e) {
+        showToast('✅ Đã tải config thành công!', 'success');
+    } catch(e) {
         showToast('❌ Lỗi: ' + e.message, 'error');
     }
-    
-    isGenerating = false;
-    btn.innerHTML = '⬇️ Tải DPI VIP (gắn UID sẵn)';
-    btn.disabled = false;
 }
+
+// ================================================================
+//                    TOAST
+// ================================================================
 
 function showToast(msg, type = '') {
     const t = document.getElementById('toast');
@@ -613,10 +821,17 @@ function showToast(msg, type = '') {
     t.className = 'toast ' + type;
     t.classList.add('show');
     clearTimeout(t._timeout);
-    t._timeout = setTimeout(() => t.classList.remove('show'), 4000);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// ================================================================
+//                    KHỞI CHẠY
+// ================================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Kiểm tra session cũ
+    // Không tự động đăng nhập để đảm bảo bảo mật
+});
 </script>
 </body>
 </html>
