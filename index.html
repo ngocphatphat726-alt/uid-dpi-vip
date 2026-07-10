@@ -3,91 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPI VIP - Secure</title>
+    <title>DPI VIP NEON</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: #f0f2f5; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; }
-        .container { background: #ffffff; max-width: 480px; width: 100%; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; position: relative; min-height: 650px; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 16px; overflow: hidden; position: relative; }
         
-        .screen { display: none; padding: 24px; }
-        .screen.active { display: block; }
+        /* ===== SNOW EFFECT ===== */
+        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .snowflake { position: absolute; top: -10px; color: #ffffff; font-size: 14px; opacity: 0.8; animation: fall linear infinite; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        @keyframes fall { 0% { transform: translateY(-10px) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0.2; } }
         
-        /* ===== LOGO ===== */
-        .logo { text-align: center; margin-bottom: 24px; padding-top: 10px; }
-        .logo h1 { color: #0068ff; font-size: 28px; font-weight: 700; }
-        .logo h1 span { color: #ff6b6b; }
-        .logo p { color: #8888aa; font-size: 13px; margin-top: 4px; }
-        .logo .badge { display: inline-block; background: #0068ff11; color: #0068ff; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid #0068ff33; margin-top: 6px; }
+        .container { background: linear-gradient(145deg, #1a0a1a, #2d0a2d); max-width: 520px; width: 100%; border-radius: 24px; padding: 28px 24px; border: 2px solid #ff2d75; box-shadow: 0 0 40px rgba(255,45,117,0.3), inset 0 0 40px rgba(255,45,117,0.05); position: relative; z-index: 1; max-height: 95vh; overflow-y: auto; }
+        .container::-webkit-scrollbar { width: 4px; }
+        .container::-webkit-scrollbar-track { background: #1a0a1a; }
+        .container::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
+        
+        .logo { text-align: center; margin-bottom: 16px; }
+        .logo h1 { color: #ff2d75; font-size: 30px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,45,117,0.5), 0 0 40px rgba(255,45,117,0.2); }
+        .logo h1 span { color: #ff6b9d; }
+        .logo p { color: #ff6b9d; font-size: 13px; margin-top: 4px; text-shadow: 0 0 10px rgba(255,107,157,0.3); }
+        .logo .badge { display: inline-block; background: rgba(255,45,117,0.15); color: #ff2d75; padding: 4px 14px; border-radius: 20px; font-size: 11px; border: 1px solid rgba(255,45,117,0.3); margin-top: 6px; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
         
         /* ===== LOGIN ===== */
-        .login-box { background: #f8f9fa; border-radius: 12px; padding: 16px; border: 1px solid #e8ecf1; margin: 12px 0; }
-        .login-box label { color: #666688; font-size: 12px; display: block; margin-bottom: 4px; font-weight: 600; }
-        .login-box input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #e0e0e0; background: #ffffff; color: #1a1a2e; font-size: 15px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; letter-spacing: 2px; }
-        .login-box input:focus { border-color: #0068ff; box-shadow: 0 0 0 3px rgba(0,104,255,0.15); }
+        .login-box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,45,117,0.2); margin: 10px 0; backdrop-filter: blur(10px); }
+        .login-box label { color: #ff6b9d; font-size: 12px; display: block; margin-bottom: 4px; font-weight: 600; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
+        .login-box input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,45,117,0.3); background: rgba(0,0,0,0.4); color: #ff6b9d; font-size: 14px; font-family: 'Courier New', monospace; outline: none; transition: 0.3s; letter-spacing: 1px; }
+        .login-box input:focus { border-color: #ff2d75; box-shadow: 0 0 20px rgba(255,45,117,0.2); }
+        .login-box input::placeholder { color: rgba(255,107,157,0.3); }
         .login-box .status { color: #ffcc00; font-size: 13px; margin-top: 6px; }
         .login-box .status.success { color: #34c759; }
         .login-box .status.error { color: #ff4466; }
         
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: #0068ff; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 8px; }
-        .btn:hover { opacity: 0.9; transform: scale(1.01); }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #ff2d75, #cc1155); color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 8px; box-shadow: 0 0 30px rgba(255,45,117,0.2); text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 50px rgba(255,45,117,0.4); }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .btn-success { background: #34c759; }
-        .btn-danger { background: #ff4466; }
-        .btn-gray { background: #8888aa; }
+        .btn-success { background: linear-gradient(135deg, #34c759, #28a745); box-shadow: 0 0 30px rgba(52,199,89,0.2); }
+        .btn-success:hover { box-shadow: 0 0 50px rgba(52,199,89,0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ff4466, #cc1133); }
+        .btn-gray { background: linear-gradient(135deg, #666688, #444466); }
+        
+        /* ===== KEY LIST ===== */
+        .key-list-container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 10px; max-height: 150px; overflow-y: auto; }
+        .key-list-container::-webkit-scrollbar { width: 3px; }
+        .key-list-container::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
+        .key-list-container .title { color: #ff6b9d; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
+        .key-list-container .key-item { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
+        .key-list-container .key-item .status-icon { margin-right: 6px; }
+        .key-list-container .key-item .used { color: #34c759; }
+        .key-list-container .key-item .unused { color: #666688; }
+        .key-list-container .key-item .admin { color: #ff2d75; font-weight: 600; }
         
         /* ===== APP ===== */
-        .app-screen { display: none; flex-direction: column; height: 100vh; max-height: 700px; background: #f0f2f5; }
+        .app-screen { display: none; flex-direction: column; height: 100%; max-height: 700px; }
         .app-screen.active { display: flex; }
         
-        .app-header { background: #0068ff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .app-header { background: linear-gradient(135deg, #1a0a1a, #2d0a2d); padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,45,117,0.2); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .app-header .left { display: flex; align-items: center; gap: 10px; }
-        .app-header .left .avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; font-weight: 600; }
-        .app-header .left .info .name { color: #ffffff; font-size: 16px; font-weight: 600; }
-        .app-header .left .info .sub { color: rgba(255,255,255,0.7); font-size: 11px; }
-        .app-header .right button { background: rgba(255,255,255,0.15); border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .app-header .right button:hover { background: rgba(255,255,255,0.25); }
+        .app-header .left .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #ff2d75, #cc1155); display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; font-weight: 600; box-shadow: 0 0 20px rgba(255,45,117,0.3); }
+        .app-header .left .info .name { color: #ff6b9d; font-size: 16px; font-weight: 600; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
+        .app-header .left .info .sub { color: rgba(255,107,157,0.5); font-size: 11px; }
+        .app-header .right button { background: rgba(255,45,117,0.15); border: 1px solid rgba(255,45,117,0.2); color: #ff6b9d; font-size: 16px; cursor: pointer; padding: 4px; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .app-header .right button:hover { background: rgba(255,45,117,0.3); }
         
-        /* ===== KEY INFO ===== */
-        .key-info { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; }
-        .key-info .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f2f5; }
+        .key-info { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; }
+        .key-info .row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,45,117,0.05); }
         .key-info .row:last-child { border-bottom: none; }
-        .key-info .label { color: #8888aa; font-size: 13px; }
-        .key-info .value { color: #1a1a2e; font-size: 13px; font-weight: 500; }
+        .key-info .label { color: rgba(255,107,157,0.5); font-size: 12px; }
+        .key-info .value { color: #ff6b9d; font-size: 13px; font-weight: 500; font-family: 'Courier New', monospace; word-break: break-all; }
         .key-info .value.green { color: #34c759; }
         .key-info .value.red { color: #ff4466; }
-        .key-info .value.blue { color: #0068ff; }
+        .key-info .value.blue { color: #ff2d75; }
         .key-info .value.orange { color: #ff9500; }
         
-        /* ===== UID BOX ===== */
-        .uid-box { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; }
-        .uid-box label { color: #8888aa; font-size: 12px; display: block; margin-bottom: 4px; }
-        .uid-box .uid-value { color: #0068ff; font-size: 14px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; }
+        .uid-box { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; }
+        .uid-box label { color: rgba(255,107,157,0.5); font-size: 12px; display: block; margin-bottom: 4px; }
+        .uid-box .uid-value { color: #ff6b9d; font-size: 13px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(255,107,157,0.1); }
         .uid-box .status { color: #34c759; font-size: 13px; margin-top: 4px; }
         
-        /* ===== ADMIN ===== */
-        .admin-section { background: #ffffff; border-radius: 12px; padding: 14px 16px; border: 1px solid #e8ecf1; margin-top: 10px; display: none; }
-        .admin-section .title { color: #0068ff; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-        .admin-section .codes { display: flex; flex-wrap: wrap; gap: 4px; max-height: 200px; overflow-y: auto; }
-        .admin-section .codes .code { background: #f0f2f5; color: #1a1a2e; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 11px; border: 1px solid #e8ecf1; }
+        .admin-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; display: none; max-height: 200px; overflow-y: auto; }
+        .admin-section::-webkit-scrollbar { width: 3px; }
+        .admin-section::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
+        .admin-section .title { color: #ff2d75; font-weight: 600; font-size: 13px; margin-bottom: 6px; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
+        .admin-section .key-item { color: #ff6b9d; font-size: 12px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
         
-        /* ===== TOAST ===== */
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,104,255,0.95); color: #ffffff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; max-width: 90%; text-align: center; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,45,117,0.9); color: #ffffff; padding: 12px 24px; border-radius: 12px; font-size: 14px; z-index: 999; box-shadow: 0 0 40px rgba(255,45,117,0.3); display: none; max-width: 90%; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .toast.show { display: block; animation: fadeIn 0.3s ease; }
-        .toast.error { background: rgba(255,68,102,0.95); }
-        .toast.success { background: rgba(52,199,89,0.95); }
+        .toast.error { background: rgba(255,68,102,0.9); }
+        .toast.success { background: rgba(52,199,89,0.9); }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         
-        .footer-text { padding: 8px 16px; text-align: center; color: #8888aa; font-size: 10px; background: #ffffff; border-top: 1px solid #e8ecf1; }
-        
+        .footer-text { padding: 8px 16px; text-align: center; color: rgba(255,107,157,0.3); font-size: 10px; margin-top: 8px; border-top: 1px solid rgba(255,45,117,0.05); }
         .hidden { display: none !important; }
-        .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff33; border-top-color: #ffffff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+        .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #ff2d75; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        @media (max-width: 400px) { .container { border-radius: 16px; } .screen { padding: 20px 16px; } }
+        .free-key-section { background: rgba(255,45,117,0.05); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.2); margin-top: 10px; }
+        .free-key-section .title { color: #ff2d75; font-size: 13px; font-weight: 600; text-shadow: 0 0 10px rgba(255,45,117,0.3); }
+        .free-key-section .free-key { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; word-break: break-all; padding: 6px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 4px; border: 1px dashed rgba(255,45,117,0.2); cursor: pointer; transition: 0.3s; }
+        .free-key-section .free-key:hover { border-color: #ff2d75; background: rgba(255,45,117,0.05); }
+        
+        @media (max-width: 400px) { .container { padding: 20px 16px; } .key-info .value { font-size: 12px; } }
     </style>
 </head>
 <body>
+
+<!-- ===== SNOW EFFECT ===== -->
+<div class="snow-container" id="snowContainer"></div>
 
 <div id="toast" class="toast">✅ Thành công!</div>
 
@@ -96,18 +118,29 @@
     <!-- ===== LOGIN SCREEN ===== -->
     <div class="screen active" id="loginScreen">
         <div class="logo">
-            <h1>🔷 DPI <span>VIP</span></h1>
-            <p>Đăng nhập bằng key để sử dụng</p>
-            <div class="badge">🔒 Bảo mật 2 lớp</div>
+            <h1>🔷 DPI <span>NEON</span></h1>
+            <p>Kéo tâm · Bám đầu mượt · Fix lố · Fix rung</p>
+            <div class="badge">❄️ NEON EDITION ❄️</div>
         </div>
+        
+        <!-- FREE KEY SECTION -->
+        <div class="free-key-section" id="freeKeySection">
+            <div class="title">🎁 KEY FREE - COPY & PASTE</div>
+            <div class="free-key" id="freeKeyDisplay" onclick="copyFreeKey()">FREE-DPI-VIP-2026-NEON</div>
+            <div style="color:rgba(255,107,157,0.3);font-size:11px;margin-top:4px;">👆 Nhấn vào key để sao chép</div>
+        </div>
+        
         <div class="login-box">
             <label>🔑 NHẬP KEY</label>
-            <input type="password" id="keyInput" placeholder="D58B2EF06E..." onkeydown="if(event.key==='Enter') login()" autocomplete="off">
+            <input type="text" id="keyInput" placeholder="D58B2EF06E..." onkeydown="if(event.key==='Enter') login()" autocomplete="off">
             <div class="status" id="loginStatus">💡 Nhập key để đăng nhập</div>
         </div>
         <button class="btn" id="loginBtn" onclick="login()">🔓 ĐĂNG NHẬP</button>
-        <div style="text-align:center;color:#8888aa;font-size:12px;margin-top:12px;">
-            🔒 Mã hóa AES-256 · Không thể crack
+        
+        <!-- DANH SÁCH KEY -->
+        <div class="key-list-container" id="keyListContainer">
+            <div class="title">📋 DANH SÁCH KEY (200 KEY)</div>
+            <div id="keyListContent"></div>
         </div>
     </div>
 
@@ -117,7 +150,7 @@
             <div class="left">
                 <div class="avatar">🔷</div>
                 <div class="info">
-                    <div class="name">DPI VIP</div>
+                    <div class="name">DPI NEON</div>
                     <div class="sub" id="userRole">👤 Thành viên</div>
                 </div>
             </div>
@@ -126,7 +159,6 @@
             </div>
         </div>
 
-        <!-- KEY INFO -->
         <div class="key-info">
             <div class="row"><span class="label">🔑 Key</span><span class="value blue" id="displayKey">---</span></div>
             <div class="row"><span class="label">📋 Loại key</span><span class="value" id="displayType">---</span></div>
@@ -135,36 +167,33 @@
             <div class="row"><span class="label">📅 Trạng thái</span><span class="value green" id="displayStatus">✅ Hoạt động</span></div>
         </div>
 
-        <!-- UID BOX -->
         <div class="uid-box">
             <label>📱 UID thiết bị của bạn</label>
             <div class="uid-value" id="uidDisplay">⏳ Đang đọc...</div>
             <div class="status" id="uidStatus">⏳ Đang xác định...</div>
         </div>
 
-        <!-- NÚT TẢI CONFIG -->
         <button class="btn btn-success" id="downloadBtn" onclick="generateAndDownload()">
-            ⬇️ TẢI CONFIG VIP
+            ⬇️ TẢI CONFIG VIP NEON
         </button>
 
-        <!-- ADMIN SECTION -->
         <div class="admin-section" id="adminSection">
-            <div class="title">👑 DANH SÁCH KEY</div>
-            <div class="codes" id="adminKeyList"></div>
+            <div class="title">👑 DANH SÁCH KEY (ADMIN)</div>
+            <div id="adminKeyList"></div>
         </div>
 
-        <div class="footer-text">🔒 Config chỉ hoạt động khi key còn hạn</div>
+        <div class="footer-text">❄️ Config chỉ hoạt động khi key còn hạn · NEON EDITION</div>
     </div>
 
 </div>
 
 <script>
 // ================================================================
-//                    HỆ THỐNG KEY - MÃ HÓA 2 LỚP
+//                    HỆ THỐNG KEY
 // ================================================================
 
-// ===== LỚP MÃ HÓA 1: HASH + SALT =====
-const SALT = 'DPIVIP2026SALT#@!SECURE';
+const SALT = 'DPIVIPNEON2026SALT#@!SECURE';
+const FREE_KEY = 'FREE-DPI-VIP-2026-NEON';
 
 function generateKeyHash(key) {
     let hash = 0;
@@ -176,65 +205,6 @@ function generateKeyHash(key) {
     return Math.abs(hash).toString(16).padStart(8, '0').toUpperCase();
 }
 
-// ===== LỚP MÃ HÓA 2: Mã hóa key trong localStorage =====
-function encryptData(data) {
-    try {
-        return btoa(encodeURIComponent(JSON.stringify(data)));
-    } catch(e) {
-        return data;
-    }
-}
-
-function decryptData(encrypted) {
-    try {
-        return JSON.parse(decodeURIComponent(atob(encrypted)));
-    } catch(e) {
-        return null;
-    }
-}
-
-// ===== TẠO KEY DATABASE - MÃ HÓA =====
-function generateKeyDatabase() {
-    const keys = {};
-    
-    // Key Admin - Đặc biệt, không thể crack
-    const adminKey = 'NPDPIVIP1DZ';
-    const adminHash = generateKeyHash(adminKey);
-    keys[adminKey] = {
-        type: 'Admin',
-        duration: -1,
-        hash: adminHash,
-        isAdmin: true,
-        encrypted: true
-    };
-    
-    // Tạo 100 key 5 giờ (dạng D58B2EF06E)
-    for (let i = 0; i < 100; i++) {
-        const k = generateRandomKey(10);
-        keys[k] = {
-            type: '5 giờ',
-            duration: 5,
-            hash: generateKeyHash(k),
-            isAdmin: false,
-            encrypted: true
-        };
-    }
-    
-    // Tạo 50 key 1 ngày
-    for (let i = 0; i < 50; i++) {
-        const k = generateRandomKey(10);
-        keys[k] = {
-            type: '1 ngày',
-            duration: 24,
-            hash: generateKeyHash(k),
-            isAdmin: false,
-            encrypted: true
-        };
-    }
-    
-    return keys;
-}
-
 function generateRandomKey(length) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -244,29 +214,85 @@ function generateRandomKey(length) {
     return result;
 }
 
-// ===== KHỞI TẠO DATABASE (MÃ HÓA) =====
+// ===== TẠO KEY DATABASE =====
+function generateKeyDatabase() {
+    const keys = {};
+    
+    // Key Admin
+    const adminKey = 'NPDPIVIP1DZ';
+    keys[adminKey] = {
+        type: 'Admin',
+        duration: -1,
+        hash: generateKeyHash(adminKey),
+        isAdmin: true
+    };
+    
+    // Free Key
+    keys[FREE_KEY] = {
+        type: 'Free',
+        duration: 2,
+        hash: generateKeyHash(FREE_KEY),
+        isAdmin: false,
+        isFree: true
+    };
+    
+    // 100 key 5 giờ
+    for (let i = 0; i < 100; i++) {
+        const k = generateRandomKey(10);
+        keys[k] = {
+            type: '5 giờ',
+            duration: 5,
+            hash: generateKeyHash(k),
+            isAdmin: false
+        };
+    }
+    
+    // 50 key 1 ngày
+    for (let i = 0; i < 50; i++) {
+        const k = generateRandomKey(10);
+        keys[k] = {
+            type: '1 ngày',
+            duration: 24,
+            hash: generateKeyHash(k),
+            isAdmin: false
+        };
+    }
+    
+    // 50 key Free (để đủ 200)
+    for (let i = 0; i < 49; i++) {
+        const k = 'FREE-' + generateRandomKey(8);
+        keys[k] = {
+            type: 'Free',
+            duration: 2,
+            hash: generateKeyHash(k),
+            isAdmin: false,
+            isFree: true
+        };
+    }
+    
+    return keys;
+}
+
 const KEY_DATABASE = generateKeyDatabase();
 
-// Lưu hash để kiểm tra nhanh (không lưu key thật)
+// ===== LƯU HASH =====
 const KEY_HASHES = {};
 Object.keys(KEY_DATABASE).forEach(k => {
     KEY_HASHES[KEY_DATABASE[k].hash] = {
         type: KEY_DATABASE[k].type,
         duration: KEY_DATABASE[k].duration,
         isAdmin: KEY_DATABASE[k].isAdmin || false,
+        isFree: KEY_DATABASE[k].isFree || false,
         key: k
     };
 });
 
-// ================================================================
-//                    QUẢN LÝ SESSION
-// ================================================================
-
+// ===== SESSION MANAGEMENT =====
 function getSession(key) {
     try {
-        const data = localStorage.getItem('dpi_session_' + key);
+        const data = localStorage.getItem('dpi_neon_session_' + key);
         if (data) {
-            const decrypted = decryptData(data);
+            const decrypted = JSON.parse(decodeURIComponent(atob(data)));
             if (decrypted && decrypted.key === key) {
                 return decrypted;
             }
@@ -279,8 +305,7 @@ function getSession(key) {
 
 function saveSession(key, data) {
     try {
-        const encrypted = encryptData(data);
-        localStorage.setItem('dpi_session_' + key, encrypted);
+        localStorage.setItem('dpi_neon_session_' + key, btoa(encodeURIComponent(JSON.stringify(data))));
         return true;
     } catch(e) {
         return false;
@@ -289,11 +314,67 @@ function saveSession(key, data) {
 
 function removeSession(key) {
     try {
-        localStorage.removeItem('dpi_session_' + key);
+        localStorage.removeItem('dpi_neon_session_' + key);
         return true;
     } catch(e) {
         return false;
     }
+}
+
+// ================================================================
+//                    HIỂN THỊ DANH SÁCH KEY
+// ================================================================
+
+function renderKeyList() {
+    const container = document.getElementById('keyListContent');
+    const sessions = {};
+    Object.keys(KEY_DATABASE).forEach(k => {
+        const session = getSession(k);
+        if (session) sessions[k] = session;
+    });
+    
+    let html = '';
+    Object.keys(KEY_DATABASE).forEach(k => {
+        const data = KEY_DATABASE[k];
+        const isUsed = sessions[k] !== undefined;
+        const isAdmin = data.isAdmin || false;
+        const isFree = data.isFree || false;
+        let statusIcon = isAdmin ? '👑' : (isFree ? '🎁' : (isUsed ? '✅' : '⬜'));
+        let statusClass = isAdmin ? 'admin' : (isUsed ? 'used' : 'unused');
+        html += `<div class="key-item"><span class="status-icon ${statusClass}">${statusIcon}</span> ${k}</div>`;
+    });
+    container.innerHTML = html;
+}
+
+// ================================================================
+//                    COPY FREE KEY
+// ================================================================
+
+function copyFreeKey() {
+    const key = document.getElementById('freeKeyDisplay').textContent;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(key).then(() => {
+            showToast('✅ Đã sao chép key free!', 'success');
+        }).catch(() => {
+            fallbackCopy(key);
+        });
+    } else {
+        fallbackCopy(key);
+    }
+}
+
+function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        showToast('✅ Đã sao chép key free!', 'success');
+    } catch(e) {
+        showToast('❌ Không thể sao chép', 'error');
+    }
+    document.body.removeChild(textarea);
 }
 
 // ================================================================
@@ -315,7 +396,6 @@ function login() {
         return;
     }
     
-    // Kiểm tra key có tồn tại không (qua hash)
     const hash = generateKeyHash(input);
     const keyData = KEY_HASHES[hash];
     
@@ -328,14 +408,10 @@ function login() {
     
     const realKey = keyData.key;
     const realData = KEY_DATABASE[realKey];
-    
-    // Kiểm tra session đã hết hạn chưa
     const session = getSession(realKey);
     const now = Date.now();
     
-    // Kiểm tra key admin không giới hạn
     if (realData.isAdmin) {
-        // Admin luôn được vào
         currentUserKey = realKey;
         currentUserData = realData;
         isLoggedIn = true;
@@ -346,11 +422,8 @@ function login() {
         return;
     }
     
-    // Kiểm tra key thường
     if (session) {
-        // Kiểm tra hết hạn
         if (session.expiry && session.expiry < now) {
-            // Kiểm tra gia hạn (5 ngày sau hết hạn)
             const gracePeriod = 5 * 24 * 60 * 60 * 1000;
             if (now > session.expiry + gracePeriod) {
                 status.textContent = '❌ Key đã hết hạn quá 5 ngày!';
@@ -358,7 +431,6 @@ function login() {
                 showToast('❌ Key đã hết hạn!', 'error');
                 return;
             } else {
-                // Gia hạn tự động
                 const newExpiry = now + (realData.duration * 60 * 60 * 1000);
                 session.expiry = newExpiry;
                 saveSession(realKey, session);
@@ -374,15 +446,9 @@ function login() {
         }
     }
     
-    // Key chưa từng đăng nhập
     if (!session) {
         const firstLogin = now;
-        let expiry;
-        if (realData.duration === -1) {
-            expiry = -1;
-        } else {
-            expiry = now + (realData.duration * 60 * 60 * 1000);
-        }
+        let expiry = realData.duration === -1 ? -1 : now + (realData.duration * 60 * 60 * 1000);
         const newSession = {
             key: realKey,
             firstLogin: firstLogin,
@@ -400,7 +466,6 @@ function login() {
         return;
     }
     
-    // Key đã có session và còn hạn
     if (session.expiry > now) {
         currentUserKey = realKey;
         currentUserData = realData;
@@ -430,8 +495,7 @@ function enterApp(key, data) {
     const uid = getDeviceUID();
     const deviceName = getDeviceName();
     
-    // Hiển thị thông tin key
-    document.getElementById('displayKey').textContent = key.substring(0, 4) + '...' + key.substring(key.length - 4);
+    document.getElementById('displayKey').textContent = key;
     document.getElementById('displayType').textContent = isAdmin ? '👑 Admin' : data.type;
     
     if (isAdmin || data.duration === -1) {
@@ -462,22 +526,20 @@ function enterApp(key, data) {
         }
     }
     
-    // UID
     document.getElementById('uidDisplay').textContent = uid || 'Không đọc được';
     document.getElementById('uidStatus').textContent = `✅ Đã nhận diện ${deviceName}`;
     document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Thành viên';
     
-    // Admin section
     if (isAdmin) {
         document.getElementById('adminSection').style.display = 'block';
         const keyList = document.getElementById('adminKeyList');
         let html = '';
         Object.keys(KEY_DATABASE).forEach(k => {
-            const d = KEY_DATABASE[k];
             const sessionData = getSession(k);
             const isUsed = sessionData !== null;
-            const status = d.isAdmin ? '👑' : (isUsed ? '✅' : '⬜');
-            html += `<span class="code">${k.substring(0,4)}...${k.substring(k.length-4)} ${status}</span>`;
+            const dataD = KEY_DATABASE[k];
+            const status = dataD.isAdmin ? '👑' : (isUsed ? '✅' : '⬜');
+            html += `<div class="key-item">${status} ${k}</div>`;
         });
         keyList.innerHTML = html;
     }
@@ -504,7 +566,7 @@ function logout() {
 }
 
 // ================================================================
-//                    LẤY UID THIẾT BỊ
+//                    LẤY UID
 // ================================================================
 
 function getDeviceUID() {
@@ -560,7 +622,6 @@ function getIOSVersion() {
 
 function generateConfig(uid, iosVersion, deviceName, key) {
     const uidShort = uid.substring(uid.length - 8);
-    const keyShort = key.substring(0, 4) + '...' + key.substring(key.length - 4);
     
     function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -582,7 +643,7 @@ function generateConfig(uid, iosVersion, deviceName, key) {
     let allowedXml = '';
     allowedVersions.forEach(v => { allowedXml += `\n                        <string>${v}</string>`; });
     
-    const descLeft = `🔷 DPI VIP - KÉO TÂM SIÊU ĐỈNH
+    const descLeft = `🔷 DPI VIP NEON - KÉO TÂM SIÊU ĐỈNH
         ✅ BÁM ĐẦU MƯỢT
         ✅ NHE TÂM
         ✅ FIX LỐ
@@ -601,12 +662,11 @@ function generateConfig(uid, iosVersion, deviceName, key) {
 
         🌐 DNS: DPI VIP_${uidShort}
 
-        🔑 KEY: ${keyShort}
+        🔑 KEY: ${key}
 
-        ❓ 3 DỮ LIỆU KHÔNG XÁC ĐỊNH:
-        0x7F3A2B1C, 0x9E4D8F6A, 0xC2B1A4F8`;
+        ❄️ NEON EDITION`;
     
-    const descRight = `DPI VIP - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. KEY: ${keyShort}. Chỉ dùng khi key còn hạn.`;
+    const descRight = `DPI VIP NEON - Kéo tâm, bám đầu mượt, fix lố fix rung, kéo là đỏ. KEY: ${key}. NEON EDITION ❄️`;
     
     return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -615,9 +675,9 @@ function generateConfig(uid, iosVersion, deviceName, key) {
     <key>PayloadDescription</key>
     <string>${descRight}</string>
     <key>PayloadDisplayName</key>
-    <string>DPI VIP - Kéo tâm</string>
+    <string>DPI VIP NEON</string>
     <key>PayloadIdentifier</key>
-    <string>com.dpivip.profile.${uidShort}</string>
+    <string>com.dpivip.neon.profile.${uidShort}</string>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
@@ -632,9 +692,9 @@ function generateConfig(uid, iosVersion, deviceName, key) {
             <key>PayloadDescription</key>
             <string>${descLeft}</string>
             <key>PayloadDisplayName</key>
-            <string>DPI VIP Config</string>
+            <string>DPI VIP NEON Config</string>
             <key>PayloadIdentifier</key>
-            <string>com.dpivip.config.${uidShort}</string>
+            <string>com.dpivip.neon.config.${uidShort}</string>
             <key>PayloadType</key>
             <string>Configuration</string>
             <key>PayloadUUID</key>
@@ -643,40 +703,23 @@ function generateConfig(uid, iosVersion, deviceName, key) {
             <integer>1</integer>
             <key>PayloadContent</key>
             <dict>
-                <key>DeviceUID</key>
-                <string>${uid}</string>
-                <key>DeviceUID_Short</key>
-                <string>${uidShort}</string>
-                <key>DeviceName</key>
-                <string>${deviceName}</string>
-                <key>CreatedAt</key>
-                <string>${new Date().toISOString()}</string>
-                <key>AllowediOSVersions</key>
-                <array>${allowedXml}
-                </array>
+                <key>DeviceUID</key><string>${uid}</string>
+                <key>DeviceUID_Short</key><string>${uidShort}</string>
+                <key>DeviceName</key><string>${deviceName}</string>
+                <key>CreatedAt</key><string>${new Date().toISOString()}</string>
+                <key>AllowediOSVersions</key><array>${allowedXml}</array>
                 <key>DNSConfig</key>
                 <dict>
-                    <key>DNSServerName</key>
-                    <string>DPI VIP_${uidShort}</string>
-                    <key>DNSIPv4</key>
-                    <array>
-                        <string>8.8.8.8</string>
-                        <string>1.1.1.1</string>
-                        <string>9.9.9.9</string>
-                    </array>
-                    <key>DNSIPv6</key>
-                    <array>
-                        <string>2001:4860:4860::8888</string>
-                        <string>2606:4700:4700::1111</string>
-                    </array>
-                    <key>DeviceUID</key>
-                    <string>${uid}</string>
+                    <key>DNSServerName</key><string>DPI VIP_${uidShort}</string>
+                    <key>DNSIPv4</key><array><string>8.8.8.8</string><string>1.1.1.1</string><string>9.9.9.9</string></array>
+                    <key>DNSIPv6</key><array><string>2001:4860:4860::8888</string><string>2606:4700:4700::1111</string></array>
+                    <key>DeviceUID</key><string>${uid}</string>
                 </dict>
                 <key>DPIParameters</key>
                 <dict>
-                    <key>DPI_Profile</key><string>VIP_KEO_TAM</string>
-                    <key>TouchSensitivity</key><real>3.0</real>
-                    <key>TouchStability</key><real>0.5</real>
+                    <key>DPI_Profile</key><string>VIP_NEON</string>
+                    <key>TouchSensitivity</key><real>3.5</real>
+                    <key>TouchStability</key><real>0.4</real>
                     <key>JitterReduction</key><string>MAXIMUM</string>
                     <key>ShakeReduction</key><string>MAXIMUM</string>
                     <key>LagReduction</key><string>MAXIMUM</string>
@@ -694,15 +737,15 @@ function generateConfig(uid, iosVersion, deviceName, key) {
                 <dict>
                     <key>DragColor</key><string>#FF0000</string>
                     <key>DragColorIntensity</key><real>1.0</real>
-                    <key>TapColor</key><string>#00FF88</string>
-                    <key>TapColorIntensity</key><real>0.8</real>
+                    <key>TapColor</key><string>#FF2D75</string>
+                    <key>TapColorIntensity</key><real>0.9</real>
                     <key>LatencyCompensation</key><integer>0</integer>
-                    <key>TouchSensitivity</key><real>3.5</real>
-                    <key>DragStability</key><real>0.5</real>
+                    <key>TouchSensitivity</key><real>4.0</real>
+                    <key>DragStability</key><real>0.4</real>
                     <key>ShakeFilter</key><string>MAXIMUM</string>
                     <key>ColorFeedback</key><string>ENABLED</string>
                     <key>DragTrail</key><string>ENABLED</string>
-                    <key>DragTrailLength</key><integer>20</integer>
+                    <key>DragTrailLength</key><integer>25</integer>
                 </dict>
                 <key>GameOptimization</key>
                 <dict>
@@ -728,10 +771,8 @@ function generateConfig(uid, iosVersion, deviceName, key) {
                 <key>ConditionalInstall</key>
                 <dict>
                     <key>DeviceVersion</key><string>${iosVersion}</string>
-                    <key>AllowedVersions</key>
-                    <array><string>17.*</string><string>18.7.*</string><string>26.1</string></array>
-                    <key>FailMessage</key>
-                    <string>Không hỗ trợ iOS này. Chỉ dùng cho iOS 17, 18.7.1-18.7.9, 26.1</string>
+                    <key>AllowedVersions</key><array><string>17.*</string><string>18.7.*</string><string>26.1</string></array>
+                    <key>FailMessage</key><string>Không hỗ trợ iOS này. NEON EDITION ❄️</string>
                 </dict>
                 <key>UnknownData1</key><string>0x7F3A2B1C</string>
                 <key>UnknownData2</key><string>0x9E4D8F6A</string>
@@ -770,7 +811,6 @@ function generateAndDownload() {
         return;
     }
     
-    // Kiểm tra key còn hạn
     const session = getSession(currentUserKey);
     const isAdmin = currentUserData?.isAdmin || false;
     
@@ -792,7 +832,7 @@ function generateAndDownload() {
         const deviceName = getDeviceName();
         const iosVer = getIOSVersion();
         const uidShort = uid.substring(uid.length - 8);
-        const filename = `DPI_VIP_${uidShort}_${Date.now()}.mobileconfig`;
+        const filename = `DPI_NEON_${uidShort}_${Date.now()}.mobileconfig`;
         const xml = generateConfig(uid, iosVer, deviceName, currentUserKey);
         
         const blob = new Blob([xml], { type: 'application/x-apple-aspen-config; charset=utf-8' });
@@ -805,7 +845,7 @@ function generateAndDownload() {
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(url), 5000);
         
-        showToast('✅ Đã tải config thành công!', 'success');
+        showToast('✅ Đã tải config NEON thành công! ❄️', 'success');
     } catch(e) {
         showToast('❌ Lỗi: ' + e.message, 'error');
     }
@@ -825,12 +865,41 @@ function showToast(msg, type = '') {
 }
 
 // ================================================================
+//                    SNOW EFFECT - CHỐNG LAG
+// ================================================================
+
+function createSnow() {
+    const container = document.getElementById('snowContainer');
+    const flakes = ['❄', '❅', '❆', '✦', '•'];
+    const numFlakes = 35; // Giảm số lượng để chống lag
+    
+    for (let i = 0; i < numFlakes; i++) {
+        const flake = document.createElement('div');
+        flake.className = 'snowflake';
+        flake.textContent = flakes[Math.floor(Math.random() * flakes.length)];
+        flake.style.left = Math.random() * 100 + '%';
+        flake.style.fontSize = (Math.random() * 10 + 8) + 'px';
+        flake.style.animationDuration = (Math.random() * 8 + 6) + 's';
+        flake.style.animationDelay = (Math.random() * 10) + 's';
+        flake.style.opacity = Math.random() * 0.5 + 0.3;
+        container.appendChild(flake);
+    }
+}
+
+// ================================================================
 //                    KHỞI CHẠY
 // ================================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Kiểm tra session cũ
-    // Không tự động đăng nhập để đảm bảo bảo mật
+    createSnow();
+    renderKeyList();
+    
+    // Tự động điền key free vào ô input khi click vào
+    document.getElementById('freeKeyDisplay').addEventListener('click', function() {
+        document.getElementById('keyInput').value = this.textContent;
+        document.getElementById('loginStatus').textContent = '💡 Đã điền key free! Nhấn đăng nhập.';
+        document.getElementById('loginStatus').className = 'status success';
+    });
 });
 </script>
 </body>
