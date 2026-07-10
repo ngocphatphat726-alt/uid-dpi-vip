@@ -45,16 +45,6 @@
         .free-key-section .free-key { color: #ff6b9d; font-size: 13px; font-family: 'Courier New', monospace; word-break: break-all; padding: 6px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 4px; border: 1px dashed rgba(255,45,117,0.2); cursor: pointer; transition: 0.3s; }
         .free-key-section .free-key:hover { border-color: #ff2d75; background: rgba(255,45,117,0.05); }
         
-        .key-list-container { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 10px; max-height: 150px; overflow-y: auto; }
-        .key-list-container::-webkit-scrollbar { width: 3px; }
-        .key-list-container::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
-        .key-list-container .title { color: #ff6b9d; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-shadow: 0 0 10px rgba(255,107,157,0.2); }
-        .key-list-container .key-item { color: #ff6b9d; font-size: 12px; font-family: 'Courier New', monospace; padding: 2px 0; border-bottom: 1px solid rgba(255,45,117,0.05); word-break: break-all; }
-        .key-list-container .key-item .status-icon { margin-right: 6px; }
-        .key-list-container .key-item .used { color: #34c759; }
-        .key-list-container .key-item .unused { color: #666688; }
-        .key-list-container .key-item .admin { color: #ff2d75; font-weight: 600; }
-        
         /* ===== APP ===== */
         .app-screen { display: none; flex-direction: column; height: 100%; max-height: 700px; }
         .app-screen.active { display: flex; }
@@ -82,7 +72,7 @@
         .uid-box .uid-value { color: #ff6b9d; font-size: 13px; font-weight: 600; word-break: break-all; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(255,107,157,0.1); }
         .uid-box .status { color: #34c759; font-size: 13px; margin-top: 4px; }
         
-        /* ===== ADMIN SECTION - 2 DANH SÁCH ===== */
+        /* ===== ADMIN SECTION - 2 DANH SÁCH (ẨN) ===== */
         .admin-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,45,117,0.15); margin-top: 8px; display: none; max-height: 300px; overflow-y: auto; }
         .admin-section::-webkit-scrollbar { width: 3px; }
         .admin-section::-webkit-scrollbar-thumb { background: #ff2d75; border-radius: 4px; }
@@ -133,10 +123,8 @@
         </div>
         <button class="btn" id="loginBtn" onclick="login()">🔓 ĐĂNG NHẬP</button>
         
-        <div class="key-list-container" id="keyListContainer">
-            <div class="title">📋 DANH SÁCH KEY (200 KEY)</div>
-            <div id="keyListContent"></div>
-        </div>
+        <!-- DANH SÁCH KEY ĐÃ BỊ ẨN HOÀN TOÀN -->
+        
     </div>
 
     <!-- ===== APP SCREEN ===== -->
@@ -172,7 +160,7 @@
             ⬇️ TẢI CONFIG VIP NEON
         </button>
 
-        <!-- ===== ADMIN SECTION - 2 DANH SÁCH ===== -->
+        <!-- ===== ADMIN SECTION - 2 DANH SÁCH (CHỈ ADMIN THẤY) ===== -->
         <div class="admin-section" id="adminSection">
             <div class="title">👑 QUẢN LÝ KEY (ADMIN)</div>
             
@@ -219,7 +207,6 @@ function generateRandomKey(length) {
 function generateKeyDatabase() {
     const keys = {};
     
-    // Key Admin
     const adminKey = 'NPDPIVIP1DZ';
     keys[adminKey] = {
         type: 'Admin',
@@ -229,7 +216,6 @@ function generateKeyDatabase() {
         category: 'admin'
     };
     
-    // Free Key
     keys[FREE_KEY] = {
         type: 'Free',
         duration: 2,
@@ -239,7 +225,6 @@ function generateKeyDatabase() {
         category: 'free'
     };
     
-    // 50 key 5 giờ
     for (let i = 0; i < 50; i++) {
         const k = generateRandomKey(10);
         keys[k] = {
@@ -251,7 +236,6 @@ function generateKeyDatabase() {
         };
     }
     
-    // 50 key 1 ngày
     for (let i = 0; i < 50; i++) {
         const k = generateRandomKey(10);
         keys[k] = {
@@ -263,7 +247,6 @@ function generateKeyDatabase() {
         };
     }
     
-    // 49 key Free (để đủ 200)
     for (let i = 0; i < 49; i++) {
         const k = 'FREE-' + generateRandomKey(8);
         keys[k] = {
@@ -281,7 +264,6 @@ function generateKeyDatabase() {
 
 const KEY_DATABASE = generateKeyDatabase();
 
-// ===== LƯU HASH =====
 const KEY_HASHES = {};
 Object.keys(KEY_DATABASE).forEach(k => {
     KEY_HASHES[KEY_DATABASE[k].hash] = {
@@ -326,28 +308,6 @@ function removeSession(key) {
     } catch(e) {
         return false;
     }
-}
-
-// ===== HIỂN THỊ DANH SÁCH KEY =====
-function renderKeyList() {
-    const container = document.getElementById('keyListContent');
-    const sessions = {};
-    Object.keys(KEY_DATABASE).forEach(k => {
-        const session = getSession(k);
-        if (session) sessions[k] = session;
-    });
-    
-    let html = '';
-    Object.keys(KEY_DATABASE).forEach(k => {
-        const data = KEY_DATABASE[k];
-        const isUsed = sessions[k] !== undefined;
-        const isAdmin = data.isAdmin || false;
-        const isFree = data.isFree || false;
-        let statusIcon = isAdmin ? '👑' : (isFree ? '🎁' : (isUsed ? '✅' : '⬜'));
-        let statusClass = isAdmin ? 'admin' : (isUsed ? 'used' : 'unused');
-        html += `<div class="key-item"><span class="status-icon ${statusClass}">${statusIcon}</span> ${k}</div>`;
-    });
-    container.innerHTML = html;
 }
 
 // ===== COPY FREE KEY =====
@@ -531,11 +491,9 @@ function enterApp(key, data) {
     document.getElementById('uidStatus').textContent = `✅ Đã nhận diện ${deviceName}`;
     document.getElementById('userRole').textContent = isAdmin ? '👑 Admin' : '👤 Thành viên';
     
-    // ===== ADMIN: 2 DANH SÁCH =====
     if (isAdmin) {
         document.getElementById('adminSection').style.display = 'block';
         
-        // Danh sách 1: Key 5 giờ & 1 ngày
         const list1 = document.getElementById('adminKeyList1');
         let html1 = '';
         Object.keys(KEY_DATABASE).forEach(k => {
@@ -549,7 +507,6 @@ function enterApp(key, data) {
         });
         list1.innerHTML = html1;
         
-        // Danh sách 2: Key Free & Admin
         const list2 = document.getElementById('adminKeyList2');
         let html2 = '';
         Object.keys(KEY_DATABASE).forEach(k => {
@@ -924,7 +881,6 @@ function createSnow() {
 
 document.addEventListener('DOMContentLoaded', function() {
     createSnow();
-    renderKeyList();
     
     document.getElementById('freeKeyDisplay').addEventListener('click', function() {
         document.getElementById('keyInput').value = this.textContent;
